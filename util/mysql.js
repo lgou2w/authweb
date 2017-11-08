@@ -28,7 +28,7 @@ var pool = mysql.createPool(config.mysql);
 var query = function (sql, callback) {
     pool.getConnection(function (err, conn) {
         if(err) {
-            callback(err, null, null)
+            callback(err, null, null);
         } else {
             conn.query(sql, function (qErr, values, fields) {
                 conn.release();
@@ -44,7 +44,7 @@ var query = function (sql, callback) {
  * @param {function} callback
  */
 var end = function (callback) {
-    pool.end(callback)
+    pool.end(callback);
 };
 
 /**
