@@ -15,38 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var uuidV4 = require('uuid/v4');
+var validate = function (req, res) {
 
-/**
- * Random UUID
- *
- * @param {boolean} unsigned
- * @returns {string}
- */
-var random = function (unsigned) {
-    var result = uuidV4();
-    if(unsigned)
-        result = result.replace(/-/g, '');
-    return result;
 };
 
-/**
- * Whether UUID
- *
- * @param {string} str
- * @param {boolean} unsigned
- * @return {boolean}
- */
-var is = function (str, unsigned) {
-    if(!str || str === undefined)
-        return false;
-    if(unsigned === false)
-        return /([0-9a-z]{8})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})/i.test(str);
-    else
-        return /([0-9a-z]{32,})/i.test(str);
-};
-
-module.exports = {
-    random: random,
-    is: is
-};
+module.exports  = validate;

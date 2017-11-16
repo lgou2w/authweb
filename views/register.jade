@@ -1,0 +1,26 @@
+html
+    head
+        title= title
+        link(rel='stylesheet', href='/css/style.css')
+        style.
+            div {
+                padding: 10px;
+            }
+            div span {
+                padding-right: 5px;
+            }
+
+block content
+    form(method='post' action='/authserver/register')
+        h1 User Register
+        div
+            span Username:
+            input(type='text' name='username')
+        div
+            span Password:
+            input(type='password' name='password')
+        div
+            span Email:
+            input(type='email', name='email')
+        div
+            input(type='submit', value='confirm')

@@ -9,5 +9,11 @@
     "password": "moonlake",
     "database": "authweb",
     "test": true
+  },
+  "token": {
+    "maxCount": 5,
+    "validity": 3,
+    "temporarily": 5,
+    "invalid": 7
   }
 }

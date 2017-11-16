@@ -18,25 +18,8 @@
 var express = require('express')
 var router = express.Router();
 
-router.post('/sessionserver/session/minecraft/join', function (req, res) {
-    var accessToken = req.body.accessToken;
-    var selectedProfile = req.body.selectedProfile;
-    var serverId = req.body.serverId;
-    // TODO
-    res.status(204);
-    res.end();
-});
-router.get('/sessionserver/session/minecraft/hasJoined', function (req, res) {
-    var serverId = req.query.serverId;
-    var username = req.query.username;
-    var ip = req.ip;
-    // TODO
-    res.json({ serverId: serverId, username: username, ip: ip });
-});
-router.get('/sessionserver/session/minecraft/profile/*', function (req, res) {
-    var unsigned = req.query.unsigned || true;
-    // TODO
-    res.json({ uuid: req.params[0], unsigned: unsigned });
-});
+router.post('/sessionserver/session/minecraft/join', require('./join'));
+router.get('/sessionserver/session/minecraft/hasJoined', require('./hasJoined'));
+router.get('/sessionserver/session/minecraft/profile/*', require('./profile'));
 
 module.exports = router;

@@ -15,38 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var uuidV4 = require('uuid/v4');
-
 /**
- * Random UUID
+ * POST request when the client connects to the server.
  *
- * @param {boolean} unsigned
- * @returns {string}
+ * @param {string} accessToken
+ * @param {string} selectedProfile
+ * @param {string} serverId
+ * @return If successful, return to http 204 state.
+ * @see POST /yggdrasil/sessionserver/session/minecraft/join
  */
-var random = function (unsigned) {
-    var result = uuidV4();
-    if(unsigned)
-        result = result.replace(/-/g, '');
-    return result;
+var join = function (req, res) {
+    var accessToken = req.body.accessToken;
+    var selectedProfile = req.body.selectedProfile;
+    var serverId = req.body.serverId;
+    var ip = req.ip;
+    // TODO
+    res.status(204);
+    res.end();
 };
 
-/**
- * Whether UUID
- *
- * @param {string} str
- * @param {boolean} unsigned
- * @return {boolean}
- */
-var is = function (str, unsigned) {
-    if(!str || str === undefined)
-        return false;
-    if(unsigned === false)
-        return /([0-9a-z]{8})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})/i.test(str);
-    else
-        return /([0-9a-z]{32,})/i.test(str);
-};
-
-module.exports = {
-    random: random,
-    is: is
-};
+module.exports = join;

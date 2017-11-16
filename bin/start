@@ -20,7 +20,7 @@
 var http = require('http');
 var app = require('../authweb');
 var server = http.createServer(app);
-server.listen(app.get('http').port, function () {
+server.listen(app.get('config').http.port, function () {
     var port = server.address().port;
     console.info('-----------------------------------------------------------------------------------------------------');
     console.info('|   A Minecraft Yggdrasil Web Server of Node.js & MySQL');

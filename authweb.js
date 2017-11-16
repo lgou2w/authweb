@@ -24,14 +24,33 @@ var app = express();
 
 /** properties */
 
-var config = JSON.parse(require('fs').readFileSync(path.join(__dirname, 'config.json')));
-app.set('http', config.http);
-app.set('mysql', config.mysql);
+var config = require('./config');
+var mysql = require('./util/mysql');
+var AuthError = function (error, message, cause) {
+    this.error = error;
+    this.message = message;
+    this.cause = cause;
+};
+var AuthErrorThrow = function (status, error, message, cause) {
+    var err = new AuthError(error, message, cause);
+    err.status = status;
+    throw err;
+};
+var AuthErrorRes = function (res, status, error, message, cause) {
+    res.status(status || 500);
+    res.json({ error: error, errorMessage: message, cause: cause });
+    res.end();
+};
+
+app.set('config', config);
+app.set('mysql', mysql);
+app.set('AuthError', AuthError);
+app.set('AuthErrorThrow', AuthErrorThrow);
+app.set('AuthErrorRes', AuthErrorRes);
 
 /** MySQL Test */
 
 if(config.mysql.test || false) {
-    var mysql = require(path.join(__dirname, 'util/mysql'));
     mysql.test(function (err) {
         if(!err) {
             console.info('The MySQL is successfully connected.')
@@ -56,13 +75,15 @@ app.use(express.static('public'));
 /** Routes */
 
 app.use('/', require('./routes/index'));
-app.use('/yggdrasil', require('./routes/yggdrasil'));
+app.use('/yggdrasil', require('./routes/yggdrasil/index'));
+app.use('/authserver', require('./routes/authserver/index'));
 
 /** Error Handler */
 
 app.use(function(err, req, res, next) {
     if(err instanceof AuthError) {
-        err.status = 500;
+        if(err.status === undefined)
+            err.status = 500;
         next(err);
     } else {
         var error = new AuthError(err.status || 500, err.message);
@@ -78,18 +99,12 @@ app.use(function(err, req, res, next) {
 
 /** Error */
 
-function AuthError(error, message, cause) {
-    this.error = error;
-    this.message = message;
-    this.cause = cause;
-}
-
 if(module.parent !== null) {
     module.exports = app;
 } else {
     var http = require('http');
     var server = http.createServer(app);
-    server.listen(app.get('http').port, function () {
+    server.listen(app.get('config').http.port, function () {
         var port = server.address().port;
         console.info('-----------------------------------------------------------------------------------------------------');
         console.info('|   A Minecraft Yggdrasil Web Server of Node.js & MySQL');

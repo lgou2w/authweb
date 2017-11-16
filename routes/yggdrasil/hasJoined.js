@@ -15,38 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var uuidV4 = require('uuid/v4');
-
 /**
- * Random UUID
+ * GET request when the server authenticates the client.
  *
- * @param {boolean} unsigned
- * @returns {string}
+ * @param {string} serverId
+ * @param {string} username
+ * @param {string} [ip]
+ * @return If failed, return to http state 204.
+ * @see GET /yggdrasil/sessionserver/session/minecraft/hasJoined
  */
-var random = function (unsigned) {
-    var result = uuidV4();
-    if(unsigned)
-        result = result.replace(/-/g, '');
-    return result;
+var hasJoined = function (req, res) {
+    var serverId = req.query.serverId;
+    var username = req.query.username;
+    var ip = req.query.ip;
+    // TODO
+    res.json({ serverId: serverId, username: username, ip: ip });
 };
 
-/**
- * Whether UUID
- *
- * @param {string} str
- * @param {boolean} unsigned
- * @return {boolean}
- */
-var is = function (str, unsigned) {
-    if(!str || str === undefined)
-        return false;
-    if(unsigned === false)
-        return /([0-9a-z]{8})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})/i.test(str);
-    else
-        return /([0-9a-z]{32,})/i.test(str);
-};
-
-module.exports = {
-    random: random,
-    is: is
-};
+module.exports = hasJoined;

@@ -23,16 +23,17 @@ var pool = mysql.createPool(config.mysql);
  * Query MySQL
  *
  * @param {string} sql
+ * @param {array} [values]
  * @param {function} callback
  */
-var query = function (sql, callback) {
+var query = function (sql, values, callback) {
     pool.getConnection(function (err, conn) {
         if(err) {
             callback(err, null, null);
         } else {
-            conn.query(sql, function (qErr, values, fields) {
+            conn.query(sql, values, function (qErr, qValues, qFields) {
                 conn.release();
-                callback(qErr, values, fields);
+                callback(qErr, qValues, qFields);
             });
         }
     });
