@@ -18,7 +18,6 @@
 var express = require('express');
 var logger = require('morgan');
 var path = require('path');
-var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var app = express();
 
@@ -26,27 +25,12 @@ var app = express();
 
 var config = require('./config');
 var mysql = require('./util/mysql');
-var AuthError = function (error, message, cause) {
-    this.error = error;
-    this.message = message;
-    this.cause = cause;
-};
-var AuthErrorThrow = function (status, error, message, cause) {
-    var err = new AuthError(error, message, cause);
-    err.status = status;
-    throw err;
-};
-var AuthErrorRes = function (res, status, error, message, cause) {
-    res.status(status || 500);
-    res.json({ error: error, errorMessage: message, cause: cause });
-    res.end();
-};
+var authErrorRes = require('./util/authError').authErrorRes;
+var authError = require('./util/authError').authError;
+
 
 app.set('config', config);
 app.set('mysql', mysql);
-app.set('AuthError', AuthError);
-app.set('AuthErrorThrow', AuthErrorThrow);
-app.set('AuthErrorRes', AuthErrorRes);
 
 /** MySQL Test */
 
@@ -69,7 +53,6 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static('public'));
 
 /** Routes */
@@ -81,20 +64,18 @@ app.use('/authserver', require('./routes/authserver/index'));
 /** Error Handler */
 
 app.use(function(err, req, res, next) {
-    if(err instanceof AuthError) {
+    if(err instanceof authError) {
         if(err.status === undefined)
             err.status = 500;
         next(err);
     } else {
-        var error = new AuthError(err.status || 500, err.message);
+        var error = new authError(err.status || 500, err.message);
         error.status = err.status;
         next(error)
     }
 });
 app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.json({ error: err.error, errorMessage: err.message, cause: err.cause });
-    res.end();
+    authErrorRes(res, err.error, err.message, err.status, err.cause);
 });
 
 /** Error */

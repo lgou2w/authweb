@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "body-parser": "latest",
-    "cookie-parser": "latest",
     "express": "latest",
     "jade": "latest",
     "morgan": "latest",

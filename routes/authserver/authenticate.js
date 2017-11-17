@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var authErrorRes = require('../../util/authError').authErrorRes;
+var authError = require('../../util/authError').authError;
 var security = require('../../util/security');
 var uuid = require('../../util/uuid');
 
@@ -40,23 +42,18 @@ var authenticate = function (req, res) { //TODO Violent request
 
     // If the username or password are not defined, login is invalid
     // 如果用户名或密码都未定义, 登录无效
-    if(username === undefined || password === undefined) {
-        var authErr = req.app.get('AuthErrorThrow');
-        authErr(403, 'ForbiddenOperationException', 'Invalid credentials. Invalid username or password.');
-    }
+    if(username === undefined || password === undefined)
+        throw authError('ForbiddenOperationException', 'Invalid username or password.', 403);
     // If the agent is not defined or the name of the agent is not Minecraft or the version is not 1, login is invalid
     // 如果 agent 未定义或 agent 的名字不为 Minecraft 或版本不为 1, 登录无效
-    if(agent === undefined || (agent.name !== 'Minecraft' || agent.version !== 1)) {
-        var authErr = req.app.get('AuthErrorThrow');
-        authErr(400, 'IllegalArgumentException', 'Invalid agent.');
-    }
+    if(agent === undefined || (agent.name !== 'Minecraft' || agent.version !== 1))
+        throw authError('ForbiddenOperationException', 'Invalid agent.', 403);
     // Otherwise check the user's password for verification
     // 否则获取用户的密码进行验证
     var mysql = req.app.get('mysql');
     mysql.query('select `password`,`uuid` from `user` where binary `username`=? limit 1;', [username], function (err, values) {
         if(err) {
-            var authErrRes = req.app.get('AuthErrorRes');
-            authErrRes(res, 500, 'Internal Error', err.message);
+            authErrorRes(res, 'Internal Error', err.message, 500);
             return;
         }
         // Verify user information and query user profile
@@ -68,8 +65,7 @@ var authenticate = function (req, res) { //TODO Violent request
             requestUser: requestUser
         }, values, function (err, userProfile) {
             if(err) {
-                var authErrRes = req.app.get('AuthErrorRes');
-                authErrRes(res, 500, 'Internal Error', err.message);
+                authErrorRes(res, 'Internal Error', err.message, 500);
                 return;
             }
             // return user profile
@@ -84,8 +80,7 @@ function validateAndQueryProfile(req, res, mysql, user, values, callback) {
     // If the length is 0, then invalid username
     // 如果长度为 0, 则表示无效的用户名
     if(values.length === 0) {
-        var authErrRes = req.app.get('AuthErrorRes');
-        authErrRes(res, 403, 'ForbiddenOperationException', 'Invalid credentials. Invalid username.');
+        authErrorRes(res, 'ForbiddenOperationException', 'Invalid username.', 403);
         return;
     }
     // Interception of the password and salt to compare the hash value of the user's plain text password. If not, then invalid password
@@ -94,8 +89,7 @@ function validateAndQueryProfile(req, res, mysql, user, values, callback) {
     var salt = password.substr(0, password.indexOf('$'));
     var passwordHash = password.substr(password.indexOf('$') + 1);
     if(security.sha256(security.sha256(user.password) + salt) !== passwordHash) {
-        var authErrRes = req.app.get('AuthErrorRes');
-        authErrRes(res, 403, 'ForbiddenOperationException', 'Invalid credentials. Invalid password.');
+        authErrorRes(res, 'ForbiddenOperationException', 'Invalid password.', 403);
         return;
     }
     user.uuid = values[0].uuid;
@@ -114,8 +108,7 @@ function validateAndQueryProfile(req, res, mysql, user, values, callback) {
             // Login failed if limit token has been exceeded
             // 如果超过限制令牌, 则登录失败
             if(values.length >= tokenMaxCount) {
-                var authErrRes = req.app.get('AuthErrorRes');
-                authErrRes(res, 403, 'ForbiddenOperationException', 'Invalid clientToken. The maximum number of accessToken.');
+                authErrorRes(res, 'ForbiddenOperationException', 'Invalid clientToken. The maximum number of accessToken.', 403);
                 return;
             }
             // Otherwise, a new token is generated and stored
@@ -142,8 +135,7 @@ function validateAndQueryProfile(req, res, mysql, user, values, callback) {
         // Limit clientToken to unsigned UUID
         // 限制客户端令牌强制为无符号 UUID
         if(!uuid.is(clientToken, true)) {
-            var authErrRes = req.app.get('AuthErrorRes');
-            authErrRes(res, 403, 'ForbiddenOperationException', 'Invalid clientToken. Non-unsigned UUID format.');
+            authErrorRes(res, 'ForbiddenOperationException', 'Invalid clientToken. Non-unsigned UUID format.', 403);
             return;
         }
         // Otherwise, the format of clientToken is correct, then query
