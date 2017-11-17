@@ -43,11 +43,11 @@ var authenticate = function (req, res) { //TODO Violent request
     // If the username or password are not defined, login is invalid
     // 如果用户名或密码都未定义, 登录无效
     if(username === undefined || password === undefined)
-        throw authError('ForbiddenOperationException', 'Invalid username or password.', 403);
+        throw new authError('ForbiddenOperationException', 'Invalid username or password.', 403);
     // If the agent is not defined or the name of the agent is not Minecraft or the version is not 1, login is invalid
     // 如果 agent 未定义或 agent 的名字不为 Minecraft 或版本不为 1, 登录无效
     if(agent === undefined || (agent.name !== 'Minecraft' || agent.version !== 1))
-        throw authError('ForbiddenOperationException', 'Invalid agent.', 403);
+        throw new authError('ForbiddenOperationException', 'Invalid agent.', 403);
     // Otherwise check the user's password for verification
     // 否则获取用户的密码进行验证
     var mysql = req.app.get('mysql');
