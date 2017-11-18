@@ -24,9 +24,15 @@ var authError = function (error, message, status, cause) {
 };
 
 var authErrorRes = function (res, error, message, status, cause) {
-    res.status(status || 500);
-    res.json({ error: error, errorMessage: message, cause: cause });
-    res.end();
+    if(error instanceof authError) {
+        res.status(error.status || 500);
+        res.json({ error: error.error, errorMessage: error.message, cause: error.cause });
+        res.end();
+    } else {
+        res.status(status || 500);
+        res.json({ error: error, errorMessage: message, cause: cause });
+        res.end();
+    }
 };
 
 module.exports = {

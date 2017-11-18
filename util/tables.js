@@ -59,7 +59,7 @@ function createUserToken(callback) {
     var sql = '' +
         'create table `user`(' +
         'id int auto_increment,' +
-        'accessToken varchar(255) not null,' +
+        'accessToken varchar(255) not null unique,' +
         'clientToken varchar(255) not null' +
         'userId varchar(32) not null unique,' +
         'timestamp bigint not null,' +

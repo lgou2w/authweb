@@ -23,26 +23,52 @@ var pool = mysql.createPool(config.mysql);
  * Query MySQL
  *
  * @param {string} sql
- * @param {array} [values]
+ * @param {array} [args]
  * @param {function} callback
  */
-var query = function (sql, values, callback) {
+var query = function (sql, args, callback) {
     pool.getConnection(function (err, conn) {
         if(err) {
-            callback(err, null, null);
+            reject(err);
         } else {
-            conn.query(sql, values, function (qErr, qValues, qFields) {
+            conn.query(sql, args, function (err, values, fields) {
                 conn.release();
-                callback(qErr, qValues, qFields);
+                callback(err, values, fields);
             });
         }
     });
 };
 
 /**
+ * Query Promise MySQL
+ *
+ * @param {string} sql
+ * @param {array} [args]
+ * @return {Promise}
+ */
+var queryPromise = function (sql, args) {
+    return new Promise(function (resolve, reject) {
+        pool.getConnection(function (err, conn) {
+            if(err) {
+                reject(err);
+            } else {
+                conn.query(sql, args, function (err, values, fields) {
+                    conn.release();
+                    if(err) {
+                        reject(err);
+                    } else {
+                        resolve({ 'values': values, 'fields': fields });
+                    }
+                });
+            }
+        });
+    });
+};
+
+/**
  * End MySQL
  *
- * @param {function} callback
+ * @param {function} [callback]
  */
 var end = function (callback) {
     pool.end(callback);
@@ -51,7 +77,7 @@ var end = function (callback) {
 /**
  * Test MySQL
  *
- * @param {function} callback
+ * @param {function} [callback]
  */
 var test = function (callback) {
     pool.getConnection(function (err, conn) {
@@ -67,6 +93,7 @@ var test = function (callback) {
 module.exports = {
     self: mysql,
     query: query,
+    queryPromise: queryPromise,
     end: end,
     test: test
 };

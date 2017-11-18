@@ -45,7 +45,20 @@ var validateToken = function (token, timestamp) {
     return result;
 };
 
+/**
+ * Promise Of
+ *
+ * @param {function} [executor]
+ * @returns {Promise}
+ */
+var ofPromise = function (executor) {
+    if(!executor)
+        executor = function (resolve, reject) { resolve(null); };
+    return new Promise(executor);
+};
+
 module.exports = {
     timestamp: timestamp,
-    validateToken: validateToken
+    validateToken: validateToken,
+    ofPromise: ofPromise
 };

@@ -15,6 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var users = require('../../util/users');
+
+/**
+ * POST request when the user needs to logout.
+ *
+ * @param {string} username
+ * @param {string} password
+ * @see POST /authserver/signout
+ */
 var signout = function (req, res) {
 
 };
