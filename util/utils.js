@@ -15,34 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var uuidV4 = require('uuid/v4');
+
+function utils() {
+}
+
 /**
  * Gets the current timestamp in seconds
  *
  * @returns {number} timestamp
  */
-var timestamp = function () {
+utils.timestamp = function () {
     return Math.round(new Date().getTime() / 1000);
-};
-
-/**
- * Validate Token Timestamp
- *
- * @param {json} token config
- * @param {number} timestamp in seconds
- * @return {{}} state
- */
-var validateToken = function (token, timestamp) {
-    var time = Math.round(new Date().getTime() / 1000);
-    var left = time - timestamp;
-    var result = {};
-    if(token.validity * 24 * 60 * 60 > left) {
-        result.validity = true; // token validity
-    } else if(token.temporarily * 24 * 60 * 60 > left) {
-        result.temporarily = true; // token temporarily
-    } else if(token.invalid * 24 * 60 * 60 <= left) {
-        result.invalid = true; // token invalid
-    }
-    return result;
 };
 
 /**
@@ -51,14 +35,39 @@ var validateToken = function (token, timestamp) {
  * @param {function} [executor]
  * @returns {Promise}
  */
-var ofPromise = function (executor) {
+utils.ofPromise = function (executor) {
     if(!executor)
         executor = function (resolve, reject) { resolve(null); };
     return new Promise(executor);
 };
 
-module.exports = {
-    timestamp: timestamp,
-    validateToken: validateToken,
-    ofPromise: ofPromise
+/**
+ * Random UUID
+ *
+ * @param {boolean} unsigned
+ * @returns {string}
+ */
+utils.randomUUID = function (unsigned) {
+    var result = uuidV4();
+    if(unsigned)
+        result = result.replace(/-/g, '');
+    return result;
 };
+
+/**
+ * Whether UUID
+ *
+ * @param {string} str
+ * @param {boolean} unsigned
+ * @return {boolean}
+ */
+utils.isUUID = function (str, unsigned) {
+    if(!str || str === undefined)
+        return false;
+    if(unsigned === false)
+        return /([0-9a-z]{8})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})/i.test(str);
+    else
+        return /([0-9a-z]{32,})/i.test(str);
+};
+
+module.exports = utils;

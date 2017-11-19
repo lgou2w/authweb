@@ -34,17 +34,17 @@ app.set('mysql', mysql);
 
 /** MySQL Test */
 
-if(config.mysql.test || false) {
-    mysql.test(function (err) {
-        if(!err) {
-            console.info('The MySQL is successfully connected.')
-        } else {
+mysql.initialize()
+    .then(function () {
+        console.info('The MySQL is successfully connected.');
+    })
+    .catch(function (err) {
+        if(err) {
             console.error('Unable to connect to the MySQL.');
             console.error(err);
             process.exit(1);
         }
     });
-}
 
 /** Base */
 

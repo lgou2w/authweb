@@ -15,38 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var uuidV4 = require('uuid/v4');
+var mysql = require('../util/mysql');
 
-/**
- * Random UUID
- *
- * @param {boolean} unsigned
- * @returns {string}
- */
-var random = function (unsigned) {
-    var result = uuidV4();
-    if(unsigned)
-        result = result.replace(/-/g, '');
-    return result;
+function UserToken(userToken) {
+    this.accessToken = userToken.accessToken;
+    this.clientToken = userToken.clientToken;
+    this.userId = userToken.userId;
+    this.timestamp = userToken.timestamp;
 };
 
 /**
- * Whether UUID
+ * Initialize User Token Model Table
  *
- * @param {string} str
- * @param {boolean} unsigned
- * @return {boolean}
+ * @returns {Promise}
  */
-var is = function (str, unsigned) {
-    if(!str || str === undefined)
-        return false;
-    if(unsigned === false)
-        return /([0-9a-z]{8})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})/i.test(str);
-    else
-        return /([0-9a-z]{32,})/i.test(str);
+UserToken.initializeTable = function () {
+    return mysql.query(
+        'create table `user-token`(' +
+        '`accessToken` varchar(32) not null unique,' +
+        '`clientToken` varchar(32) not null,' +
+        '`userId` varchar(32) not null,' +
+        '`timestamp` bigint not null,' +
+        'primary key(`accessToken`));')
 };
 
-module.exports = {
-    random: random,
-    is: is
-};
+module.exports = UserToken;

@@ -16,37 +16,28 @@
  */
 
 var mysql = require('mysql');
+var utils = require('../util/utils');
 var config = require('../config');
 var pool = mysql.createPool(config.mysql);
+
+function MySQL() {
+}
+
+/**
+ * MySQL Pool
+ *
+ * @type {Pool}
+ */
+MySQL.pool = pool;
 
 /**
  * Query MySQL
  *
  * @param {string} sql
  * @param {array} [args]
- * @param {function} callback
- */
-var query = function (sql, args, callback) {
-    pool.getConnection(function (err, conn) {
-        if(err) {
-            reject(err);
-        } else {
-            conn.query(sql, args, function (err, values, fields) {
-                conn.release();
-                callback(err, values, fields);
-            });
-        }
-    });
-};
-
-/**
- * Query Promise MySQL
- *
- * @param {string} sql
- * @param {array} [args]
  * @return {Promise}
  */
-var queryPromise = function (sql, args) {
+MySQL.query = function (sql, args) {
     return new Promise(function (resolve, reject) {
         pool.getConnection(function (err, conn) {
             if(err) {
@@ -68,32 +59,69 @@ var queryPromise = function (sql, args) {
 /**
  * End MySQL
  *
- * @param {function} [callback]
+ * @return {Promise}
  */
-var end = function (callback) {
-    pool.end(callback);
-};
-
-/**
- * Test MySQL
- *
- * @param {function} [callback]
- */
-var test = function (callback) {
-    pool.getConnection(function (err, conn) {
-        if(err) {
-            callback(err);
-        } else {
-            callback(null);
-            pool.releaseConnection(conn);
-        }
+MySQL.end = function () {
+    return utils.ofPromise(function (resolve, reject) {
+        pool.end(function (err) {
+            if(err) reject(err);
+            else resolve();
+        })
     })
 };
 
-module.exports = {
-    self: mysql,
-    query: query,
-    queryPromise: queryPromise,
-    end: end,
-    test: test
+/**
+ * Initialize MySQL
+ *
+ * @return {Promise}
+ */
+MySQL.initialize = function () {
+    return utils.ofPromise(function (resolve, reject) {
+        pool.getConnection(function (err, conn) {
+            if(err) {
+                if(err.code && err.code === 'ER_BAD_DB_ERROR') {
+                    console.warn('Unable to connect to the MySQL. No database found: ' + config.mysql.database);
+                    var conn0 = mysql.createConnection({
+                        host: config.mysql.host,
+                        port: config.mysql.port,
+                        user: config.mysql.user,
+                        password: config.mysql.password,
+                        database: 'mysql'
+                    });
+                    conn0.query('create database if not exists ' + config.mysql.database + ';', function (err) {
+                        conn0.end();
+                        if(err) {
+                            reject(err);
+                        } else {
+                            console.info('> Successfully created the database. Initialize the table...');
+                            require('../models/User').initializeTable()
+                                .then(function () {
+                                    console.info('> User model table initialization completed.');
+                                })
+                                .then(function () {
+                                    return require('../models/UserToken').initializeTable()
+                                        .then(function () {
+                                            console.info('> UserToken model table initialization completed.');
+                                        })
+                                })
+                                .then(function () {
+                                    console.info('> All data model initialization is completed.')
+                                    resolve();
+                                })
+                                .catch(function (err) {
+                                    reject(err)
+                                });
+                        }
+                    });
+                } else {
+                    reject(err);
+                }
+            } else {
+                pool.releaseConnection(conn);
+                resolve();
+            }
+        })
+    })
 };
+
+module.exports = MySQL;
