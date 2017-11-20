@@ -18,14 +18,13 @@
 var express = require('express')
 var router = express.Router();
 
-
 var register = require('./register');
 router.route('/register').get(register.get).post(register.post);
 
 router.post('/authenticate', require('./authenticate'));
 router.post('/refresh', require('./refresh'));
 router.post('/validate', require('./validate'));
-router.post('/invalidate',require('./invalidate') );
+router.post('/invalidate', require('./invalidate'));
 router.post('/signout', require('./signout'));
 
 module.exports = router;

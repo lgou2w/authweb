@@ -15,8 +15,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var AuthError = require('../../util/AuthError');
+var Logger = require('../../util/Logger');
+var Util = require('../../util/Util');
+var UserToken = require('../../models/UserToken');
+
+/**
+ * POST request when the verification token is valid
+ *
+ * @param {string} accessToken
+ * @param {string} [clientToken]
+ * @see POST /authserver/validate
+ */
 var validate = function (req, res) {
 
+    var accessToken = req.body.accessToken;
+    var clientToken = req.body.clientToken;
+
+    if(!Util.isUUID(accessToken, true))
+        throw new AuthError('ForbiddenOperationException', 'Invalid access token or Non-unsigned UUID format.', 403);
+    if(clientToken && !Util.isUUID(clientToken, true))
+        throw new AuthError('ForbiddenOperationException', 'Invalid client token. Non-unsigned UUID format.', 403);
+
+    Logger.info('User validate token with accessToken: ' + accessToken);
+
+    UserToken.findTokenByAccess(accessToken)
+        .then(function (token) {
+            if(!token || !token.validate(accessToken, clientToken)) {
+                throw new AuthError('ForbiddenOperationException', 'Invalid token or expired.', 403)
+            } else {
+                res.status(204);
+                res.json({});
+                res.end();
+            }
+        })
+        .catch(function (err) {
+            AuthError.response(res, err);
+        })
 };
 
 module.exports  = validate;

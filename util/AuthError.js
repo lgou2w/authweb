@@ -15,7 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var authError = function (error, message, status, cause) {
+var Logger = require('./Logger');
+var util = require('util');
+
+function AuthError(error, message, status, cause) {
     Error.call(this);
     this.error = error;
     this.message = message;
@@ -23,19 +26,21 @@ var authError = function (error, message, status, cause) {
     this.cause = cause;
 };
 
-var authErrorRes = function (res, error, message, status, cause) {
-    if(error instanceof authError) {
+util.inherits(AuthError, Error);
+
+AuthError.response = function (res, error, message, status, cause) {
+    if(error instanceof AuthError) {
+        Logger.error('Error: ' + error.error + ': ' + error.message);
         res.status(error.status || 500);
         res.json({ error: error.error, errorMessage: error.message, cause: error.cause });
         res.end();
     } else {
+        Logger.error('Error: ' + error + ': ' + message);
+        console.error(error);
         res.status(status || 500);
         res.json({ error: error, errorMessage: message, cause: cause });
         res.end();
     }
 };
 
-module.exports = {
-    authError: authError,
-    authErrorRes: authErrorRes
-};
+module.exports = AuthError;

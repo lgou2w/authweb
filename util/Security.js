@@ -17,13 +17,16 @@
 
 var crypto = require('crypto');
 
+function Security() {
+}
+
 /**
  * Generate the SHA-1 digest of the given message.
  *
  * @param {string} message
  * @returns {string}
  */
-var sha1 = function (message) {
+Security.sha1 = function (message) {
     return hash('sha1', message);
 };
 
@@ -33,7 +36,7 @@ var sha1 = function (message) {
  * @param {string} message
  * @returns {string}
  */
-var sha256 = function (message) {
+Security.sha256 = function (message) {
     return hash('sha256', message);
 };
 
@@ -43,7 +46,7 @@ var sha256 = function (message) {
  * @param {string} message
  * @returns {string}
  */
-var sha512 = function (message) {
+Security.sha512 = function (message) {
     return hash('sha512', message);
 };
 
@@ -53,7 +56,7 @@ var sha512 = function (message) {
  * @param {string} message
  * @returns {string}
  */
-var md5 = function (message) {
+Security.md5 = function (message) {
     return hash('md5', message);
 };
 
@@ -63,9 +66,4 @@ function hash(algorithm, message) {
     return hash.digest('hex');
 }
 
-module.exports = {
-    sha1: sha1,
-    sha256: sha256,
-    sha512: sha512,
-    md5: md5
-};
+module.exports = Security;

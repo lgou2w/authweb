@@ -15,9 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var authErrorRes = require('../../util/authError').authErrorRes;
-var authError = require('../../util/authError').authError;
-var utils = require('../../util/utils');
+var AuthError = require('../../util/AuthError');
+var Logger = require('../../util/Logger');
+var Util = require('../../util/Util');
+var User = require('../../models/User');
+var UserToken = require('../../models/UserToken');
 
 /**
  * POST request when the client uses a username and password for authentication.
@@ -31,9 +33,55 @@ var utils = require('../../util/utils');
  * @param       {int} version
  * @see POST /authserver/authenticate
  */
-var authenticate = function (req, res) { //TODO Violent request
+var authenticate = function (req, res) {
 
-    // TODO
+    var username = req.body.username;
+    var password = req.body.password;
+    var clientToken = req.body.clientToken;
+    var requestUser = req.body.requestUser || false;
+    var agent = req.body.agent;
+
+    if(!agent || (agent.name !== 'Minecraft' || agent.version !== 1))
+        throw new AuthError('ForbiddenOperationException', 'Invalid agent.', 403);
+    if(clientToken && !Util.isUUID(clientToken, true))
+        throw new AuthError('ForbiddenOperationException', 'Invalid client token. Non-unsigned UUID format.', 403);
+
+    Logger.info('User Authenticate with username: ' + username);
+
+    //TODO Violent request
+
+    User.findUserByName(username)
+        .then(function (user) {
+            if(!user || !user.verifyPassword(password)) {
+                throw new AuthError('ForbiddenOperationException', 'Invalid credentials. Invalid username or password.', 403);
+            } else {
+                if(user.banned)
+                    throw new AuthError('ForbiddenOperationException', 'Account has been banned.', 403);
+                var result = { userId: user.uuid, username: user.username };
+                UserToken.findTokenByClientOrCreate(user.uuid, clientToken)
+                    .then(function (token) {
+                        result.accessToken = token.accessToken;
+                        result.clientToken = token.clientToken;
+                        return result;
+                    })
+                    .then(function (result) {
+                        var profile = {
+                            id: result.userId,
+                            username: result.username
+                        };
+                        res.json({
+                            accessToken: result.accessToken,
+                            clientToken: result.clientToken,
+                            selectedProfile: profile,
+                            availableProfiles: [profile]
+                        });
+                        res.end();
+                    });
+            }
+        })
+        .catch(function (err) {
+            AuthError.response(res, err);
+        })
 };
 
 module.exports  = authenticate;

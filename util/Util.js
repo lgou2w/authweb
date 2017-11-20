@@ -16,8 +16,10 @@
  */
 
 var uuidV4 = require('uuid/v4');
+const CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const HEX_MAX_INDEX = 16;
 
-function utils() {
+function Util() {
 }
 
 /**
@@ -25,7 +27,7 @@ function utils() {
  *
  * @returns {number} timestamp
  */
-utils.timestamp = function () {
+Util.timestamp = function () {
     return Math.round(new Date().getTime() / 1000);
 };
 
@@ -35,7 +37,7 @@ utils.timestamp = function () {
  * @param {function} [executor]
  * @returns {Promise}
  */
-utils.ofPromise = function (executor) {
+Util.ofPromise = function (executor) {
     if(!executor)
         executor = function (resolve, reject) { resolve(null); };
     return new Promise(executor);
@@ -44,10 +46,10 @@ utils.ofPromise = function (executor) {
 /**
  * Random UUID
  *
- * @param {boolean} unsigned
+ * @param {boolean} [unsigned]
  * @returns {string}
  */
-utils.randomUUID = function (unsigned) {
+Util.randomUUID = function (unsigned) {
     var result = uuidV4();
     if(unsigned)
         result = result.replace(/-/g, '');
@@ -58,16 +60,42 @@ utils.randomUUID = function (unsigned) {
  * Whether UUID
  *
  * @param {string} str
- * @param {boolean} unsigned
+ * @param {boolean} [unsigned]
  * @return {boolean}
  */
-utils.isUUID = function (str, unsigned) {
+Util.isUUID = function (str, unsigned) {
     if(!str || str === undefined)
         return false;
     if(unsigned === false)
-        return /([0-9a-z]{8})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})/i.test(str);
+        return /^([0-9a-z]{8})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})$/i.test(str);
     else
-        return /([0-9a-z]{32,})/i.test(str);
+        return /^([0-9a-z]{32})$/i.test(str);
 };
 
-module.exports = utils;
+/**
+ * Generate Hex String
+ *
+ * @param {number} length
+ */
+Util.generateStringHex = function (length) {
+    return Util.generateString(length, HEX_MAX_INDEX);
+};
+
+/**
+ * Generate String
+ *
+ * @param {number} length
+ * @param {number} [maxIndex]
+ */
+Util.generateString = function (length, maxIndex) {
+    if(length < 0)
+        throw Error('The length can not be less than 0.');
+    if(!maxIndex)
+        maxIndex = CHARS.length - 1;
+    var str = new Array('');
+    for(var i = 0; i < length; i++)
+        str.push(CHARS[Math.ceil(Math.random() * maxIndex)])
+    return str.join('');
+};
+
+module.exports = Util;

@@ -9,10 +9,15 @@
     "password": "moonlake",
     "database": "authweb"
   },
-  "token": {
-    "maxCount": 5,
-    "validity": 3,
-    "temporarily": 5,
-    "invalid": 7
+  "user": {
+    "allowSelectingProfile": false,
+    "password": "SHA256WithSalt",
+    "passwords": [
+      "MD5", "SHA256", "SHA512", "MD5WithSalt", "SHA256WithSalt", "SHA512WithSalt"
+    ],
+    "token": {
+      "max": 5,
+      "validity": 259200
+    }
   }
 }

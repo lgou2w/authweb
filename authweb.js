@@ -16,7 +16,6 @@
  */
 
 var express = require('express');
-var logger = require('morgan');
 var path = require('path');
 var bodyParser = require('body-parser');
 var app = express();
@@ -24,24 +23,22 @@ var app = express();
 /** properties */
 
 var config = require('./config');
-var mysql = require('./util/mysql');
-var authErrorRes = require('./util/authError').authErrorRes;
-var authError = require('./util/authError').authError;
-
+var AuthError = require('./util/AuthError');
+var Logger = require('./util/Logger');
+var MySQL = require('./util/MySQL');
 
 app.set('config', config);
-app.set('mysql', mysql);
+app.set('mysql', MySQL);
 
 /** MySQL Test */
 
-mysql.initialize()
+MySQL.initialize()
     .then(function () {
-        console.info('The MySQL is successfully connected.');
+        Logger.info('The MySQL is successfully connected.');
     })
     .catch(function (err) {
         if(err) {
-            console.error('Unable to connect to the MySQL.');
-            console.error(err);
+            Logger.error('Unable to connect to the MySQL.', err);
             process.exit(1);
         }
     });
@@ -50,7 +47,7 @@ mysql.initialize()
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(logger('dev'));
+app.use(Logger.log4js.connectLogger(Logger.authweb, { level: 'auto', format: ':remote-addr :method :url :status :response-timems' }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('public'));
@@ -64,18 +61,18 @@ app.use('/authserver', require('./routes/authserver/index'));
 /** Error Handler */
 
 app.use(function(err, req, res, next) {
-    if(err instanceof authError) {
+    if(err instanceof AuthError) {
         if(err.status === undefined)
             err.status = 500;
-        next(err);
+        AuthError.response(res, err);
     } else {
-        var error = new authError(err.status || 500, err.message);
+        var error = new AuthError(err.status || 500, err.message);
         error.status = err.status;
         next(error)
     }
 });
 app.use(function(err, req, res, next) {
-    authErrorRes(res, err.error, err.message, err.status, err.cause);
+    AuthError.response(res, err.error, err.message, err.status, err.cause);
 });
 
 /** Error */
