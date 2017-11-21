@@ -142,9 +142,6 @@ function find(field, value) {
             .then(function (data) {
                 return data.values === 0 ? null : new User(data.values[0]);
             })
-            .catch(function (err) {
-                reject(err);
-            })
     }
 };
 

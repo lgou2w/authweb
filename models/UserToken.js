@@ -200,9 +200,6 @@ function find(field, value, limit) {
                     return tokens.length === 0 ? null : tokens;
                 }
             })
-            .catch(function (err) {
-                reject(err);
-            })
     }
 };
 
