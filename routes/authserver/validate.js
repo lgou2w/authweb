@@ -32,12 +32,12 @@ var validate = function (req, res) {
     var accessToken = req.body.accessToken;
     var clientToken = req.body.clientToken;
 
+    Logger.info('User validate token with accessToken: ' + accessToken);
+
     if(!Util.isUUID(accessToken, true))
         throw new AuthError('ForbiddenOperationException', 'Invalid access token or Non-unsigned UUID format.', 403);
     if(clientToken && !Util.isUUID(clientToken, true))
         throw new AuthError('ForbiddenOperationException', 'Invalid client token. Non-unsigned UUID format.', 403);
-
-    Logger.info('User validate token with accessToken: ' + accessToken);
 
     UserToken.findTokenByAccess(accessToken)
         .then(function (token) {

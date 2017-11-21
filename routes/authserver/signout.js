@@ -34,10 +34,10 @@ var signout = function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
 
+    Logger.info('User signout with username: ' + username);
+
     if(!username || !password)
         throw new AuthError('ForbiddenOperationException', 'Invalid credentials. Invalid username or password.', 403);
-
-    Logger.info('User signout with username: ' + username);
 
     User.findUserByName(username)
         .then(function (user) {

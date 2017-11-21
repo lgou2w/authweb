@@ -39,14 +39,14 @@ var refresh = function (req, res) {
     var requestUser = req.body.requestUser || false;
     var selectedProfile = req.body.selectedProfile;
 
+    Logger.info('User refresh with accessToken: ' + accessToken);
+
     if(!Util.isUUID(accessToken, true))
         throw new AuthError('ForbiddenOperationException', 'Invalid access token or Non-unsigned UUID format.', 403);
     if(clientToken && !Util.isUUID(clientToken, true))
         throw new AuthError('ForbiddenOperationException', 'Invalid client token. Non-unsigned UUID format.', 403);
     if(!req.app.get('config').user.allowSelectingProfile && selectedProfile)
         throw new AuthError('ForbiddenOperationException', 'Access token already has a profile assigned.', 403);
-
-    Logger.info('User refresh with accessToken: ' + accessToken);
 
     UserToken.findTokenByAccess(accessToken)
         .then(function (token) {
