@@ -63,6 +63,8 @@ User.findUserByUUID = function (uuid) {
 User.securityPassword = function (raw) {
     var passwordType = config.user.password;
     switch(passwordType) {
+        case 'Raw':
+            return raw;
         case 'MD5':
             return Security.md5(raw);
         case 'SHA256':
@@ -92,6 +94,8 @@ User.prototype.verifyPassword = function (raw) {
     var passwordType = config.user.password;
     var password = this.password;
     switch(passwordType) {
+        case 'Raw':
+            return raw === password;
         case 'MD5':
             return Security.md5(raw) === password;
         case 'SHA256':
