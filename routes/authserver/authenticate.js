@@ -49,8 +49,6 @@ var authenticate = function (req, res) {
         throw new AuthError('ForbiddenOperationException', 'Invalid credentials. Invalid username or password.', 403);
     if(!agent || (agent.name !== 'Minecraft' || agent.version !== 1))
         throw new AuthError('ForbiddenOperationException', 'Invalid agent.', 403);
-    if(clientToken && !Util.isUUID(clientToken, true))
-        throw new AuthError('ForbiddenOperationException', 'Invalid client token. Non-unsigned UUID format.', 403);
 
     User.findUserByName(username)
         .then(function (user) {
@@ -69,7 +67,7 @@ var authenticate = function (req, res) {
                     .then(function (result) {
                         var profile = {
                             id: result.userId,
-                            username: result.username
+                            name: result.username
                         };
                         res.json({
                             accessToken: result.accessToken,

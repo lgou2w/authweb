@@ -27,7 +27,7 @@ server.listen(app.get('config').http.port, function () {
     console.info('|   https://github.com/McMoonLakeDevAuth/authweb');
     console.info('|   by lgou2w');
     console.info('-----------------------------------------------------------------------------------------------------');
-    console.info('|   AuthWeb Server Listening on http://localhost:' + port);
+    console.info('|   AuthWeb Server Listening on http://localhost:' + port + '/authweb');
     console.info('|   Listening request...');
     console.info('-----------------------------------------------------------------------------------------------------');
 });

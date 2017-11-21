@@ -18,6 +18,9 @@
     "token": {
       "max": 5,
       "validity": 259200
+    },
+    "session": {
+      "timeout": 30
     }
   }
 }

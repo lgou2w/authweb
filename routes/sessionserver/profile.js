@@ -15,21 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var Util = require('../../util/Util');
+var Texture = require('../../util/Texture');
+
 /**
- * GET request when the server authenticates the client.
+ * GET request when the client queries for user profile.
  *
- * @param {string} serverId
- * @param {string} username
- * @param {string} [ip]
- * @return If failed, return to http state 204.
- * @see GET /yggdrasil/sessionserver/session/minecraft/hasJoined
+ * @param {string} uuid
+ * @param {boolean} [unsigned]
+ * @see GET /sessionserver/session/minecraft/profile/{uuid}
  */
-var hasJoined = function (req, res) {
-    var serverId = req.query.serverId;
-    var username = req.query.username;
-    var ip = req.query.ip;
-    // TODO
-    res.json({ serverId: serverId, username: username, ip: ip });
+var profile =  function (req, res) {
+    var uuid = req.params[0];
+    var unsigned = req.query.unsigned || true;
+    res.json({});
 };
 
-module.exports = hasJoined;
+module.exports = profile;

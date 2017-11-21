@@ -17,6 +17,7 @@
 
 const Steve = '9549596ad015e015cb7ae5ce59b5d1750fef08f3f9a85c16ecdbd3cf7dc7f365';
 const Alex = 'df8ed96c557d441a63e7b6a4a911ab84fa453b42fc2ae6b01c3e1b02e138168c';
+const Owner = 'e2ade6626ce05936fde2fd6be82676c127095b8a8bacff0adca8362719536076';
 
 function Texture() {
 }
@@ -34,5 +35,12 @@ Texture.Steve = Steve;
  * @type {string} file
  */
 Texture.Alex = Alex;
+
+/**
+ * Texture of lgou2w's
+ *
+ * @type {string} file
+ */
+Texture.Owner = Owner;
 
 module.exports = Texture;

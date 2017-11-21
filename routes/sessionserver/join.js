@@ -19,32 +19,45 @@ var AuthError = require('../../util/AuthError');
 var Logger = require('../../util/Logger');
 var Util = require('../../util/Util');
 var UserToken = require('../../models/UserToken');
+var UserSession = require('../../models/UserSession');
 
 /**
- * POST request when the verification token is valid
+ * POST request when the client connects to the server.
  *
  * @param {string} accessToken
- * @param {string} [clientToken]
- * @see POST /authserver/validate
+ * @param {string} selectedProfile
+ * @param {string} serverId
+ * @return If successful, return to http 204 state.
+ * @see POST /sessionserver/session/minecraft/join
  */
-var validate = function (req, res) {
+var join = function (req, res) {
 
     var accessToken = req.body.accessToken;
-    var clientToken = req.body.clientToken;
+    var selectedProfile = req.body.selectedProfile;
+    var serverId = req.body.serverId;
+    var ip = req.ip;
 
-    Logger.info('User validate token with accessToken: ' + accessToken);
+    Logger.info('User try  join server \'' + serverId + '\' with accessToken: ' + accessToken);
 
     if(!Util.isUUID(accessToken, true))
         throw new AuthError('ForbiddenOperationException', 'Invalid access token or Non-unsigned UUID format.', 403);
+    if(!Util.isUUID(selectedProfile, true))
+        throw new AuthError('ForbiddenOperationException', 'Invalid selected profile or Non-unsigned UUID format.', 403);
 
     UserToken.findTokenByAccess(accessToken)
         .then(function (token) {
-            if(!token || !token.validate(accessToken, clientToken)) {
-                throw new AuthError('ForbiddenOperationException', 'Invalid token or expired.', 403)
+            if(!token || token.userId !== selectedProfile) {
+                throw new AuthError('ForbiddenOperationException', 'Invalid token or profile.', 403);
             } else {
-                res.status(204);
-                res.json({});
-                res.end();
+                var session = UserSession.createSession(serverId, token.accessToken, token.userId, ip);
+                if(!session.saveSession()) {
+                    throw new AuthError('Internal Error', 'Failed to save session.', 500);
+                } else {
+                    Logger.info('User join server \'' + serverId + '\' with session: ' + JSON.stringify(session));
+                    res.status(204);
+                    res.json({});
+                    res.end();
+                }
             }
         })
         .catch(function (err) {
@@ -52,4 +65,4 @@ var validate = function (req, res) {
         })
 };
 
-module.exports  = validate;
+module.exports = join;

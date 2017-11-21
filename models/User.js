@@ -23,8 +23,8 @@ var Util = require('../util/Util');
 /**
  * User Model
  *
- * @param {User} [user]
  * @constructor
+ * @param {User | {uuid: string, username: string, password: string, timestamp: number, email: string, banned: number | boolean}} [user]
  */
 function User(user) {
     this.uuid = user.uuid;
@@ -59,6 +59,7 @@ User.findUserByUUID = function (uuid) {
  * Security User Password
  *
  * @param {string} raw
+ * @return {string}
  */
 User.securityPassword = function (raw) {
     var passwordType = config.user.password;
@@ -89,6 +90,7 @@ User.securityPassword = function (raw) {
  * Verify User Password
  *
  * @param {string} raw
+ * @return {boolean}
  */
 User.prototype.verifyPassword = function (raw) {
     var passwordType = config.user.password;

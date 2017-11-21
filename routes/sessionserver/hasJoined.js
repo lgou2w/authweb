@@ -15,11 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var express = require('express')
-var router = express.Router();
+var Util = require('../../util/Util');
+var Texture = require('../../util/Texture');
 
-router.post('/sessionserver/session/minecraft/join', require('./join'));
-router.get('/sessionserver/session/minecraft/hasJoined', require('./hasJoined'));
-router.get('/sessionserver/session/minecraft/profile/*', require('./profile'));
+/**
+ * GET request when the server authenticates the client.
+ *
+ * @param {string} serverId
+ * @param {string} username
+ * @param {string} [ip]
+ * @return If failed, return to http state 204.
+ * @see GET /sessionserver/session/minecraft/hasJoined
+ */
+var hasJoined = function (req, res) {
+    var serverId = req.query.serverId;
+    var username = req.query.username;
+    var ip = req.query.ip;
+    res.json({});
+};
 
-module.exports = router;
+module.exports = hasJoined;

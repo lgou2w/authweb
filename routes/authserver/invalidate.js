@@ -35,8 +35,6 @@ var invalidate = function (req, res) {
 
     if(!Util.isUUID(accessToken, true))
         throw new AuthError('ForbiddenOperationException', 'Invalid access token or Non-unsigned UUID format.', 204);
-    if(clientToken && !Util.isUUID(clientToken, true))
-        throw new AuthError('ForbiddenOperationException', 'Invalid client token. Non-unsigned UUID format.', 204);
 
     UserToken.findTokenByAccess(accessToken)
         .then(function (token) {

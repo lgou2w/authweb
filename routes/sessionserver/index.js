@@ -15,23 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * POST request when the client connects to the server.
- *
- * @param {string} accessToken
- * @param {string} selectedProfile
- * @param {string} serverId
- * @return If successful, return to http 204 state.
- * @see POST /yggdrasil/sessionserver/session/minecraft/join
- */
-var join = function (req, res) {
-    var accessToken = req.body.accessToken;
-    var selectedProfile = req.body.selectedProfile;
-    var serverId = req.body.serverId;
-    var ip = req.ip;
-    // TODO
-    res.status(204);
-    res.end();
-};
+var express = require('express')
+var router = express.Router();
 
-module.exports = join;
+router.post('/session/minecraft/join', require('./join'));
+router.get('/session/minecraft/hasJoined', require('./hasJoined'));
+router.get('/session/minecraft/profile/*', require('./profile'));
+
+module.exports = router;

@@ -24,8 +24,8 @@ var Util = require('../util/Util');
 /**
  * User Token Model
  *
- * @param {UserToken} [userToken]
  * @constructor
+ * @param {UserToken | {accessToken: string, clientToken: string, userId: string, timestamp: number, [valid]: boolean}} [userToken]
  */
 function UserToken(userToken) {
     this.accessToken = userToken.accessToken;
@@ -79,6 +79,7 @@ UserToken.findTokensByUserId = function (userId) {
  *
  * @param {string} userId
  * @param {string} [clientToken]
+ * @return {Promise}
  */
 UserToken.findTokenByClientOrCreate = function (userId, clientToken) {
     if(!clientToken) {
@@ -119,6 +120,7 @@ UserToken.findTokenByAccess = function (accessToken) {
  * Delete User Token by Access Token
  *
  * @param {string} accessToken
+ * @return {Promise}
  */
 UserToken.deleteTokenByAccess = function (accessToken) {
     return MySQL.query('delete from `user-token` where binary `accessToken`=?;', [accessToken])
@@ -131,6 +133,7 @@ UserToken.deleteTokenByAccess = function (accessToken) {
  * Delete All User Tokens by User UUID
  *
  * @param {string} userId
+ * @return {Promise}
  */
 UserToken.deleteTokensByUserId = function (userId) {
     return MySQL.query('delete from `user-token` where binary `userId`=?;', [userId])
@@ -163,6 +166,7 @@ UserToken.prototype.saveToken = function () {
  *
  * @param {string} accessToken
  * @param {string} [clientToken]
+ * @return {boolean}
  */
 UserToken.prototype.validate = function (accessToken, clientToken) {
     if(!accessToken || (clientToken && this.clientToken !== clientToken))
@@ -212,7 +216,7 @@ UserToken.initializeTable = function () {
     return MySQL.query(
         'create table `user-token`(' +
         '`accessToken` varchar(32) not null unique,' +
-        '`clientToken` varchar(32) not null,' +
+        '`clientToken` varchar(255) not null,' +
         '`userId` varchar(32) not null,' +
         '`timestamp` bigint not null,' +
         'primary key(`accessToken`));')

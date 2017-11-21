@@ -20,7 +20,7 @@ var router = express.Router();
 
 router.get('/', function (req, res) {
     var content = {
-        title: 'Authweb',
+        title: 'AuthWeb',
         link: 'https://github.com/McMoonLakeDevAuth/authweb',
         subTitle: 'A Minecraft Yggdrasil Web Server of Node.js',
         message: 'by lgou2w'
