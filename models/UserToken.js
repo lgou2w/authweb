@@ -58,12 +58,10 @@ UserToken.createToken = function (userId, clientToken) {
  * @return {Promise}
  */
 UserToken.findTokenByClient = function (clientToken) {
-    return Util.ofPromise(function (resolve, reject) {
-        find('clientToken', clientToken, 1)
-            .then(function (tokens) {
-                resolve(tokens ? tokens[0] : null);
-            });
-    })
+    return find('clientToken', clientToken, 1)
+        .then(function (tokens) {
+            return tokens ? tokens[0] : null;
+        });
 };
 
 /**
@@ -111,12 +109,10 @@ UserToken.findTokenByClientOrCreate = function (userId, clientToken) {
  * @return {Promise}
  */
 UserToken.findTokenByAccess = function (accessToken) {
-    return Util.ofPromise(function (resolve, reject) {
-        find('accessToken', accessToken, 1)
-            .then(function (tokens) {
-                resolve(tokens ? tokens[0] : null);
-            });
-    })
+    return find('accessToken', accessToken, 1)
+        .then(function (tokens) {
+            return tokens ? tokens[0] : null;
+        });
 };
 
 /**
