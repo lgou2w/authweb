@@ -35,20 +35,22 @@ var UserToken = require('../../models/UserToken');
  */
 var authenticate = function (req, res) {
 
+    // TODO Request Limit
+
     var username = req.body.username;
     var password = req.body.password;
     var clientToken = req.body.clientToken;
     var requestUser = req.body.requestUser || false;
     var agent = req.body.agent;
 
+    if(!username || !password)
+        throw new AuthError('ForbiddenOperationException', 'Invalid credentials. Invalid username or password.', 403);
     if(!agent || (agent.name !== 'Minecraft' || agent.version !== 1))
         throw new AuthError('ForbiddenOperationException', 'Invalid agent.', 403);
     if(clientToken && !Util.isUUID(clientToken, true))
         throw new AuthError('ForbiddenOperationException', 'Invalid client token. Non-unsigned UUID format.', 403);
 
-    Logger.info('User Authenticate with username: ' + username);
-
-    //TODO Violent request
+    Logger.info('User authenticate with username: ' + username);
 
     User.findUserByName(username)
         .then(function (user) {

@@ -138,15 +138,13 @@ function find(field, value) {
     if(!value) {
         return Util.ofPromise();
     } else {
-        return Util.ofPromise(function (resolve, reject) {
-            MySQL.query('select * from `user` where binary `' + field + '`=? limit 1;', [value])
-                .then(function (data) {
-                    data.values === 0 ? resolve(null) : resolve(new User(data.values[0]));
-                })
-                .catch(function (err) {
-                    reject(err);
-                })
-        })
+        return MySQL.query('select * from `user` where binary `' + field + '`=? limit 1;', [value])
+            .then(function (data) {
+                return data.values === 0 ? null : new User(data.values[0]);
+            })
+            .catch(function (err) {
+                reject(err);
+            })
     }
 };
 

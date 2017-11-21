@@ -20,7 +20,7 @@ var log4js = require('log4js');
 log4js.configure({
     appenders: {
         console: { type: 'console' },
-        log: { type: 'file', filename: 'logs/authweb.log' },
+        log: { type: 'file', filename: 'logs/authweb.log', maxLogSize: 300 * 1024 },
         logs: { type: 'dateFile', filename: 'logs/authweb-', pattern: 'yyyy-MM-dd.log', alwaysIncludePattern: true }
     },
     categories: {

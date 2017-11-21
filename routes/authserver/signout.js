@@ -15,6 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var AuthError = require('../../util/AuthError');
+var Logger = require('../../util/Logger');
+var User = require('../../models/User');
+var UserToken = require('../../models/UserToken');
+
 /**
  * POST request when the user needs to logout.
  *
@@ -24,6 +29,32 @@
  */
 var signout = function (req, res) {
 
+    // TODO Request Limit
+
+    var username = req.body.username;
+    var password = req.body.password;
+
+    if(!username || !password)
+        throw new AuthError('ForbiddenOperationException', 'Invalid credentials. Invalid username or password.', 403);
+
+    Logger.info('User signout with username: ' + username);
+
+    User.findUserByName(username)
+        .then(function (user) {
+            if(!user || !user.verifyPassword(password)) {
+                throw new AuthError('ForbiddenOperationException', 'Invalid credentials. Invalid username or password.', 403);
+            } else {
+                UserToken.deleteTokensByUserId(user.uuid)
+                    .then(function () {
+                        res.status(204);
+                        res.json({});
+                        res.end();
+                    })
+            }
+        })
+        .catch(function (err) {
+            AuthError.response(res, err);
+        })
 };
 
 module.exports  = signout;

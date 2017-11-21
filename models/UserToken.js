@@ -87,7 +87,7 @@ UserToken.findTokenByClientOrCreate = function (userId, clientToken) {
         return UserToken.findTokensByUserId(userId)
             .then(function (tokens) {
                 if(tokens && tokens.length >= config.user.token.max) {
-                    throw new AuthError('ForbiddenOperationException', 'Invalid clientToken. The maximum number of accessToken.', 403)
+                    throw new AuthError('ForbiddenOperationException', 'Invalid clientToken. The maximum number of accessToken.', 403);
                 } else {
                     return UserToken.createToken(userId).saveToken();
                 }
@@ -127,7 +127,19 @@ UserToken.findTokenByAccess = function (accessToken) {
 UserToken.deleteTokenByAccess = function (accessToken) {
     return MySQL.query('delete from `user-token` where binary `accessToken`=?;', [accessToken])
         .then(function () {
-            Logger.info('User a token is deleted from accessToken: ' + accessToken)
+            Logger.info('User a token is deleted from accessToken: ' + accessToken);
+        });
+};
+
+/**
+ * Delete All User Tokens by User UUID
+ *
+ * @param {string} userId
+ */
+UserToken.deleteTokensByUserId = function (userId) {
+    return MySQL.query('delete from `user-token` where binary `userId`=?;', [userId])
+        .then(function () {
+            Logger.info('User all tokens is deleted from userId: ' + userId);
         });
 };
 
@@ -159,7 +171,16 @@ UserToken.prototype.saveToken = function () {
 UserToken.prototype.validate = function (accessToken, clientToken) {
     if(!accessToken || (clientToken && this.clientToken !== clientToken))
         return false;
-    return this.accessToken === accessToken && this.valid;
+    if(accessToken !== accessToken)
+        return false;
+    if(this.valid) {
+        return true;
+    } else {
+        UserToken.deleteTokenByAccess(accessToken)
+            .then(function () {
+                return false;
+            });
+    }
 };
 
 function find(field, value, limit) {
@@ -170,24 +191,22 @@ function find(field, value, limit) {
     if(!value) {
         return Util.ofPromise();
     } else {
-        return Util.ofPromise(function (resolve, reject) {
-            MySQL.query('select * from `user-token` where binary `' + field + '`=? limit ' + limit + ';', [value])
-                .then(function (data) {
-                    if(data.values.length === 0) {
-                        resolve(null);
-                    } else {
-                        var tokens = [];
-                        for(var index in data.values) {
-                            var token = new UserToken(data.values[index]);
-                            tokens.push(token);
-                        }
-                        resolve(tokens);
+        return MySQL.query('select * from `user-token` where binary `' + field + '`=? limit ' + limit + ';', [value])
+            .then(function (data) {
+                if(data.values.length === 0) {
+                    return null;
+                } else {
+                    var tokens = [];
+                    for(var index in data.values) {
+                        var token = new UserToken(data.values[index]);
+                        tokens.push(token);
                     }
-                })
-                .catch(function (err) {
-                    reject(err);
-                })
-        })
+                    return tokens.length === 0 ? null : tokens;
+                }
+            })
+            .catch(function (err) {
+                reject(err);
+            })
     }
 };
 

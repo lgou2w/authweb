@@ -51,7 +51,7 @@ var refresh = function (req, res) {
     UserToken.findTokenByAccess(accessToken)
         .then(function (token) {
             if(!token || (clientToken && token.clientToken !== clientToken)) {
-                throw new AuthError('ForbiddenOperationException', 'Invalid client token.', 403)
+                throw new AuthError('ForbiddenOperationException', 'Invalid token.', 403)
             } else {
                 User.findUserByUUID(token.userId)
                     .then(function (user) {
