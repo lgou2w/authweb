@@ -54,9 +54,9 @@ app.use(express.static('public'));
 
 /** Routes */
 
-app.use('/authweb', require('./routes/index'));
-app.use('/authweb/sessionserver', require('./routes/sessionserver/index'));
-app.use('/authweb/authserver', require('./routes/authserver/index'));
+app.use('/', require('./routes/index'));
+app.use('/sessionserver', require('./routes/sessionserver/index'));
+app.use('/authserver', require('./routes/authserver/index'));
 
 /** Error Handler */
 
@@ -89,7 +89,7 @@ if(module.parent !== null) {
         console.info('|   https://github.com/McMoonLakeDevAuth/authweb');
         console.info('|   by lgou2w');
         console.info('-----------------------------------------------------------------------------------------------------');
-        console.info('|   AuthWeb Server Listening on http://localhost:' + port + '/authweb');
+        console.info('|   AuthWeb Server Listening on http://localhost:' + port);
         console.info('|   Listening request...');
         console.info('-----------------------------------------------------------------------------------------------------');
     });

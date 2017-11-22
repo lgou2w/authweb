@@ -38,8 +38,8 @@ var invalidate = function (req, res) {
 
     UserToken.findTokenByAccess(accessToken)
         .then(function (token) {
-            if(!token || (clientToken && token.clientToken !== clientToken)) {
-                throw new AuthError('ForbiddenOperationException', 'Invalid token.', 204);
+            if(!token || !token.isValidElseDelete(false) || (clientToken && token.clientToken !== clientToken)) {
+                throw new AuthError('ForbiddenOperationException', 'Invalid token or expired.', 204);
             } else {
                 UserToken.deleteTokenByAccess(token.accessToken)
                     .then(function () {

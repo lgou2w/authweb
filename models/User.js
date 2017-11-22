@@ -31,9 +31,8 @@ function User(user) {
     this.username = user.username;
     this.password = user.password;
     this.timestamp = user.timestamp;
-    this.email = user.email;
     this.banned = typeof user.banned === 'number' ? user.banned === 1 : user.banned;
-};
+}
 
 /**
  * Find User by Name
@@ -125,12 +124,11 @@ User.prototype.verifyPassword = function (raw) {
  */
 User.prototype.saveUser = function () {
     var user = this;
-    return MySQL.query('insert into `user`(`uuid`,`username`,`password`,`timestamp`,`email`,`banned`) values(?,?,?,?,?,?);', [
+    return MySQL.query('insert into `user`(`uuid`,`username`,`password`,`timestamp`,`banned`) values(?,?,?,?,?);', [
         user.uuid,
         user.username,
         user.password,
         user.timestamp,
-        user.email,
         user.banned || 0
     ])
         .then(function () {
@@ -146,7 +144,7 @@ function find(field, value) {
     } else {
         return MySQL.query('select * from `user` where binary `' + field + '`=? limit 1;', [value])
             .then(function (data) {
-                return data.values === 0 ? null : new User(data.values[0]);
+                return data.values.length === 0 ? null : new User(data.values[0]);
             })
     }
 };
@@ -163,7 +161,6 @@ User.initializeTable = function () {
         '`username` varchar(16) not null,' +
         '`password` varchar(255) not null,' +
         '`timestamp` bigint not null,' +
-        '`email` varchar(255),' +
         '`banned` bool default \'0\' not null,' +
         'primary key(`uuid`));')
 };

@@ -15,8 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Util = require('../../util/Util');
-var Texture = require('../../util/Texture');
+var UserProfile = require('../../models/UserProfile');
 
 /**
  * GET request when the client queries for user profile.
@@ -28,7 +27,9 @@ var Texture = require('../../util/Texture');
 var profile =  function (req, res) {
     var uuid = req.params[0];
     var unsigned = req.query.unsigned || true;
-    res.json({});
+    res.status(200);
+    res.json(UserProfile.OWNER);
+    res.end();
 };
 
 module.exports = profile;

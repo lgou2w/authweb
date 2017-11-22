@@ -1,5 +1,7 @@
 {
   "http": {
+    "https": false,
+    "host": "localhost",
     "port": 8080
   },
   "mysql": {
@@ -17,7 +19,8 @@
     ],
     "token": {
       "max": 5,
-      "validity": 259200
+      "valid": 259200,
+      "invalid": 604800
     },
     "session": {
       "timeout": 30

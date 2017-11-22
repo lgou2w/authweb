@@ -36,7 +36,7 @@ function UserSession(userSession) {
     this.accessToken = userSession.accessToken;
     this.userId = userSession.userId;
     this.ip = userSession.ip;
-};
+}
 
 /**
  * Create User Session

@@ -20,6 +20,7 @@ var Logger = require('../../util/Logger');
 var Util = require('../../util/Util');
 var User = require('../../models/User');
 var UserToken = require('../../models/UserToken');
+var UserAuthentication = require('../../models/UserAuthentication');
 
 /**
  * POST request when user refreshes token.
@@ -48,36 +49,31 @@ var refresh = function (req, res) {
 
     UserToken.findTokenByAccess(accessToken)
         .then(function (token) {
-            if(!token || (clientToken && token.clientToken !== clientToken)) {
-                throw new AuthError('ForbiddenOperationException', 'Invalid token.', 403)
+            if(!token || !token.isValidElseDelete(true) || (clientToken && token.clientToken !== clientToken)) {
+                throw new AuthError('ForbiddenOperationException', 'Invalid token or expired.', 403)
             } else {
                 User.findUserByUUID(token.userId)
                     .then(function (user) {
                         if(user.banned)
                             throw new AuthError('ForbiddenOperationException', 'Account has been banned.', 403);
-                        var result = { userId: user.uuid, username: user.username };
-                        UserToken.deleteTokenByAccess(token.accessToken)
-                            .then(function () {
-                                UserToken.createToken(user.uuid, token.clientToken).saveToken()
-                                    .then(function (token) {
-                                        result.accessToken = token.accessToken;
-                                        result.clientToken = token.clientToken;
-                                        return result;
-                                    })
-                                    .then(function (result) {
-                                        var profile = {
-                                            id: result.userId,
-                                            name: result.username
-                                        };
-                                        res.json({
-                                            accessToken: result.accessToken,
-                                            clientToken: result.clientToken,
-                                            selectedProfile: profile,
-                                            availableProfiles: [profile]
+                        if(clientToken && token.clientToken === clientToken) {
+                            return UserToken.updateTokenByClient(user.userId, token.clientToken)
+                                .then(function (token) {
+                                    return UserAuthentication.create(user.uuid, user.username, token.accessToken, token.clientToken);
+                                });
+                        } else {
+                            return UserToken.deleteTokenByAccess(token.accessToken)
+                                .then(function () {
+                                    return UserToken.createToken(user.uuid, token.clientToken).saveToken()
+                                        .then(function (token) {
+                                            return UserAuthentication.create(user.uuid, user.username, token.accessToken, token.clientToken);
                                         });
-                                        res.end();
-                                    });
-                            });
+                                });
+                        }
+                    })
+                    .then(function (authentication) {
+                        res.json(authentication);
+                        res.end();
                     })
             }
         })

@@ -39,7 +39,7 @@ var validate = function (req, res) {
 
     UserToken.findTokenByAccess(accessToken)
         .then(function (token) {
-            if(!token || !token.validate(accessToken, clientToken)) {
+            if(!token || !token.isValidElseDelete(false) || !token.validate(accessToken, clientToken)) {
                 throw new AuthError('ForbiddenOperationException', 'Invalid token or expired.', 403)
             } else {
                 res.status(204);

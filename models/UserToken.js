@@ -25,15 +25,16 @@ var Util = require('../util/Util');
  * User Token Model
  *
  * @constructor
- * @param {UserToken | {accessToken: string, clientToken: string, userId: string, timestamp: number, [valid]: boolean}} [userToken]
+ * @param {UserToken | {accessToken: string, clientToken: string, userId: string, timestamp: number, [valid]: boolean, [invalid]: boolean}} [userToken]
  */
 function UserToken(userToken) {
     this.accessToken = userToken.accessToken;
     this.clientToken = userToken.clientToken;
     this.userId = userToken.userId;
     this.timestamp = userToken.timestamp;
-    this.valid = userToken.valid || Util.timestamp() - this.timestamp < config.user.token.validity;
-};
+    this.valid = userToken.valid || Util.timestamp() - this.timestamp < config.user.token.valid;
+    this.invalid = userToken.invalid || Util.timestamp() - this.timestamp > config.user.token.invalid;
+}
 
 /**
  * Create User Token
@@ -117,6 +118,26 @@ UserToken.findTokenByAccess = function (accessToken) {
 };
 
 /**
+ * Update User Token by Client Token
+ *
+ * @param {string} userId
+ * @param {string} clientToken
+ * @return {Promise}
+ */
+UserToken.updateTokenByClient = function (userId, clientToken) {
+    var token = UserToken.createToken(userId, clientToken);
+    return MySQL.query('update `user-token` set `accessToken`=?,`timestamp`=? where binary `clientToken`=?;', [
+        token.accessToken,
+        token.timestamp,
+        token.clientToken
+    ])
+        .then(function () {
+            Logger.info('User a token is update from clientToken: ' + token.clientToken);
+            return token;
+        })
+};
+
+/**
  * Delete User Token by Access Token
  *
  * @param {string} accessToken
@@ -162,7 +183,21 @@ UserToken.prototype.saveToken = function () {
 };
 
 /**
- * Validate User Token
+ * Get token is valid, otherwise deleted
+ *
+ * @param {boolean} [allowTemporarily]
+ */
+UserToken.prototype.isValidElseDelete = function (allowTemporarily) {
+    if(this.valid || (allowTemporarily && !this.invalid)) {
+        return true;
+    } else {
+        UserToken.deleteTokenByAccess(this.accessToken).then(function () {})
+        return false;
+    }
+};
+
+/**
+ * Validate User Token is Valid
  *
  * @param {string} accessToken
  * @param {string} [clientToken]
@@ -171,16 +206,7 @@ UserToken.prototype.saveToken = function () {
 UserToken.prototype.validate = function (accessToken, clientToken) {
     if(!accessToken || (clientToken && this.clientToken !== clientToken))
         return false;
-    if(accessToken !== accessToken)
-        return false;
-    if(this.valid) {
-        return true;
-    } else {
-        UserToken.deleteTokenByAccess(accessToken)
-            .then(function () {
-                return false;
-            });
-    }
+    return accessToken === this.accessToken && this.valid;
 };
 
 function find(field, value, limit) {

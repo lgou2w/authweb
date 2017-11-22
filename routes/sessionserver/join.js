@@ -37,12 +37,14 @@ var join = function (req, res) {
     var serverId = req.body.serverId;
     var ip = req.ip;
 
-    Logger.info('User try  join server \'' + serverId + '\' with accessToken: ' + accessToken);
+    Logger.info('User try join server \'' + serverId + '\' with accessToken: ' + accessToken);
 
     if(!Util.isUUID(accessToken, true))
         throw new AuthError('ForbiddenOperationException', 'Invalid access token or Non-unsigned UUID format.', 403);
     if(!Util.isUUID(selectedProfile, true))
         throw new AuthError('ForbiddenOperationException', 'Invalid selected profile or Non-unsigned UUID format.', 403);
+    if(!serverId)
+        throw new AuthError('ForbiddenOperationException', 'Invalid server id.', 403);
 
     UserToken.findTokenByAccess(accessToken)
         .then(function (token) {

@@ -17,9 +17,9 @@
 
 var AuthError = require('../../util/AuthError');
 var Logger = require('../../util/Logger');
-var Util = require('../../util/Util');
 var User = require('../../models/User');
 var UserToken = require('../../models/UserToken');
+var UserAuthentication = require('../../models/UserAuthentication');
 
 /**
  * POST request when the client uses a username and password for authentication.
@@ -57,26 +57,12 @@ var authenticate = function (req, res) {
             } else {
                 if(user.banned)
                     throw new AuthError('ForbiddenOperationException', 'Account has been banned.', 403);
-                var result = { userId: user.uuid, username: user.username };
                 UserToken.findTokenByClientOrCreate(user.uuid, clientToken)
                     .then(function (token) {
-                        result.accessToken = token.accessToken;
-                        result.clientToken = token.clientToken;
-                        return result;
-                    })
-                    .then(function (result) {
-                        var profile = {
-                            id: result.userId,
-                            name: result.username
-                        };
-                        res.json({
-                            accessToken: result.accessToken,
-                            clientToken: result.clientToken,
-                            selectedProfile: profile,
-                            availableProfiles: [profile]
-                        });
+                        var authentication = UserAuthentication.create(user.uuid, user.username, token.accessToken, token.clientToken);
+                        res.json(authentication);
                         res.end();
-                    });
+                    })
             }
         })
         .catch(function (err) {
