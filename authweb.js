@@ -68,29 +68,8 @@ app.use(function(err, req, res, next) {
     } else {
         var error = new AuthError(err.status || 500, err.message);
         error.status = err.status;
-        next(error)
+        AuthError.response(res, err);
     }
 });
-app.use(function(err, req, res, next) {
-    AuthError.response(res, err.error, err.message, err.status, err.cause);
-});
 
-/** Error */
-
-if(module.parent !== null) {
-    module.exports = app;
-} else {
-    var http = require('http');
-    var server = http.createServer(app);
-    server.listen(app.get('config').http.port, function () {
-        var port = server.address().port;
-        console.info('-----------------------------------------------------------------------------------------------------');
-        console.info('|   A Minecraft Yggdrasil Web Server of Node.js & MySQL');
-        console.info('|   https://github.com/McMoonLakeDevAuth/authweb');
-        console.info('|   by lgou2w');
-        console.info('-----------------------------------------------------------------------------------------------------');
-        console.info('|   AuthWeb Server Listening on http://localhost:' + port);
-        console.info('|   Listening request...');
-        console.info('-----------------------------------------------------------------------------------------------------');
-    });
-}
+module.exports = app;

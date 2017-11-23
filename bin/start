@@ -17,13 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var http = require('http');
 var app = require('../authweb');
+var config = require('../config.json');
+var http = require('http');
 var server = http.createServer(app);
-server.listen(app.get('config').http.port, function () {
+server.listen(config.http.port, function () {
     var port = server.address().port;
     console.info('-----------------------------------------------------------------------------------------------------');
-    console.info('|   A Minecraft Yggdrasil Web Server of Node.js & MySQL');
+    console.info('|   A Minecraft Yggdrasil Web Server of Node.js');
     console.info('|   https://github.com/McMoonLakeDevAuth/authweb');
     console.info('|   by lgou2w');
     console.info('-----------------------------------------------------------------------------------------------------');

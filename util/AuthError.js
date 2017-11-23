@@ -18,12 +18,13 @@
 var Logger = require('./Logger');
 var util = require('util');
 
-function AuthError(error, message, status, cause) {
+function AuthError(error, message, status, cause, render) {
     Error.call(this);
     this.error = error;
     this.message = message;
     this.status = status;
     this.cause = cause;
+    this.render = render;
 };
 
 util.inherits(AuthError, Error);
@@ -31,9 +32,14 @@ util.inherits(AuthError, Error);
 AuthError.response = function (res, error, message, status, cause) {
     if(error instanceof AuthError) {
         Logger.error('Error: ' + error.error + ': ' + error.message);
-        res.status(error.status || 500);
-        res.json({ error: error.error, errorMessage: error.message, cause: error.cause });
-        res.end();
+        if(error.render) {
+            res.render('error', { title: 'Error - AuthWeb', error: error.error, message: error.message });
+            res.end();
+        } else {
+            res.status(error.status || 500);
+            res.json({ error: error.error, errorMessage: error.message, cause: error.cause });
+            res.end();
+        }
     } else {
         Logger.error('Error: ' + error + ': ' + message);
         console.error(error);

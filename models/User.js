@@ -31,6 +31,7 @@ function User(user) {
     this.username = user.username;
     this.password = user.password;
     this.timestamp = user.timestamp;
+    this.email = user.email;
     this.banned = typeof user.banned === 'number' ? user.banned === 1 : user.banned;
 }
 
@@ -124,11 +125,12 @@ User.prototype.verifyPassword = function (raw) {
  */
 User.prototype.saveUser = function () {
     var user = this;
-    return MySQL.query('insert into `user`(`uuid`,`username`,`password`,`timestamp`,`banned`) values(?,?,?,?,?);', [
+    return MySQL.query('insert into `user`(`uuid`,`username`,`password`,`timestamp`,`email`,`banned`) values(?,?,?,?,?,?);', [
         user.uuid,
         user.username,
         user.password,
         user.timestamp,
+        user.email,
         user.banned || 0
     ])
         .then(function () {
@@ -161,6 +163,7 @@ User.initializeTable = function () {
         '`username` varchar(16) not null,' +
         '`password` varchar(255) not null,' +
         '`timestamp` bigint not null,' +
+        '`email` varchar(255),' +
         '`banned` bool default \'0\' not null,' +
         'primary key(`uuid`));')
 };

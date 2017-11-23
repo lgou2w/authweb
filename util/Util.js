@@ -98,4 +98,17 @@ Util.generateString = function (length, maxIndex) {
     return str.join('');
 };
 
+/**
+ * Validate Reg of String
+ *
+ * @param {RegExp | string} reg
+ * @param {string} str
+ */
+Util.validateReg = function (reg, str) {
+    var regex = reg;
+    if(typeof reg === 'string')
+        regex = eval(reg.indexOf('/') === 0 ? reg : ('/' + reg + '/'));
+    return regex.test(str);
+};
+
 module.exports = Util;

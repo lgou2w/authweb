@@ -21,6 +21,7 @@ var Util = require('../../util/Util');
 var User = require('../../models/User');
 var UserToken = require('../../models/UserToken');
 var UserAuthentication = require('../../models/UserAuthentication');
+var config = require('../../config.json');
 
 /**
  * POST request when user refreshes token.
@@ -44,7 +45,7 @@ var refresh = function (req, res) {
 
     if(!Util.isUUID(accessToken, true))
         throw new AuthError('ForbiddenOperationException', 'Invalid access token or Non-unsigned UUID format.', 403);
-    if(!req.app.get('config').user.allowSelectingProfile && selectedProfile)
+    if(!config.user.profile.allowSelecting && selectedProfile)
         throw new AuthError('ForbiddenOperationException', 'Access token already has a profile assigned.', 403);
 
     UserToken.findTokenByAccess(accessToken)
