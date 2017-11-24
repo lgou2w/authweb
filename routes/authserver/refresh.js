@@ -21,7 +21,7 @@ var Util = require('../../util/Util');
 var User = require('../../models/User');
 var UserToken = require('../../models/UserToken');
 var UserAuthentication = require('../../models/UserAuthentication');
-var config = require('../../config.json');
+var config = require('../../config');
 
 /**
  * POST request when user refreshes token.
@@ -60,14 +60,14 @@ var refresh = function (req, res) {
                         if(clientToken && token.clientToken === clientToken) {
                             return UserToken.updateTokenByClient(user.userId, token.clientToken)
                                 .then(function (token) {
-                                    return UserAuthentication.create(user.uuid, user.username, token.accessToken, token.clientToken);
+                                    return UserAuthentication.create(user.uuid, user.username, token.accessToken, token.clientToken, requestUser);
                                 });
                         } else {
                             return UserToken.deleteTokenByAccess(token.accessToken)
                                 .then(function () {
                                     return UserToken.createToken(user.uuid, token.clientToken).saveToken()
                                         .then(function (token) {
-                                            return UserAuthentication.create(user.uuid, user.username, token.accessToken, token.clientToken);
+                                            return UserAuthentication.create(user.uuid, user.username, token.accessToken, token.clientToken, requestUser);
                                         });
                                 });
                         }

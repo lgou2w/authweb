@@ -16,7 +16,7 @@
  */
 
 var cache = require('memory-cache');
-var config = require('../config.json');
+var config = require('../config');
 
 /**
  * Default user session expiration time

@@ -59,7 +59,7 @@ var authenticate = function (req, res) {
                     throw new AuthError('ForbiddenOperationException', 'Account has been banned.', 403);
                 UserToken.findTokenByClientOrCreate(user.uuid, clientToken)
                     .then(function (token) {
-                        var authentication = UserAuthentication.create(user.uuid, user.username, token.accessToken, token.clientToken);
+                        var authentication = UserAuthentication.create(user.uuid, user.username, token.accessToken, token.clientToken, requestUser);
                         res.json(authentication);
                         res.end();
                     })

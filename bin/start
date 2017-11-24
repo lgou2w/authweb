@@ -18,7 +18,7 @@
  */
 
 var app = require('../authweb');
-var config = require('../config.json');
+var config = require('../config');
 var http = require('http');
 var server = http.createServer(app);
 server.listen(config.http.port, function () {

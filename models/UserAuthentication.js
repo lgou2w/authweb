@@ -37,10 +37,14 @@ function UserAuthentication(userAuthentication) {
  * @param {string} username
  * @param {string} accessToken
  * @param {string} clientToken
+ * @param {boolean} [requestUser]
  * @returns {UserAuthentication}
  */
-UserAuthentication.create = function (userId, username, accessToken, clientToken) {
-    return new UserAuthentication({ accessToken: accessToken, clientToken: clientToken, selectedProfile: { id: userId, name: username }, user: { id: userId }});
+UserAuthentication.create = function (userId, username, accessToken, clientToken, requestUser) {
+    var auth = new UserAuthentication({ accessToken: accessToken, clientToken: clientToken, selectedProfile: { id: userId, name: username }});
+    if(requestUser)
+        auth.user = { id: userId };
+    return auth;
 };
 
 module.exports = UserAuthentication;

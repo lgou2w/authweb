@@ -19,7 +19,7 @@ var AuthError = require('../../util/AuthError');
 var Logger = require('../../util/Logger');
 var Util = require('../../util/Util');
 var User = require('../../models/User');
-var config = require('../../config.json');
+var config = require('../../config');
 
 var get = function (req, res) {
     if(!config.user.register.allow) {

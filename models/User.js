@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var config = require('../config.json');
 var Security = require('../util/Security');
 var MySQL = require('../util/MySQL');
 var Util = require('../util/Util');
+var config = require('../config');
 
 /**
  * User Model

@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var config = require('../config.json');
 var AuthError = require('../util/AuthError');
 var Logger = require('../util/Logger');
 var MySQL = require('../util/MySQL');
 var Util = require('../util/Util');
+var config = require('../config');
 
 /**
  * User Token Model

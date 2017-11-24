@@ -18,7 +18,7 @@
 var Util = require('./Util');
 var Logger = require('./Logger');
 var mysql = require('mysql');
-var config = require('../config.json');
+var config = require('../config');
 var pool = mysql.createPool(config.mysql);
 
 function MySQL() {

@@ -16,7 +16,7 @@
  */
 
 var Util = require('../util/Util');
-var config =require('../config.json');
+var config =require('../config');
 
 const BASE_URL = 'http://' + config.http.host + '/textures/';
 
