@@ -23,8 +23,7 @@ var config = require('../../config.json');
 
 var get = function (req, res) {
     if(!config.user.register.allow) {
-        res.status(404);
-        res.end();
+        throw new AuthError('ForbiddenOperationException', 'Not allowed to register.', 403, undefined, true);
     } else {
         res.render('register', { title: 'User Register - AuthWeb' });
         res.end();
@@ -32,14 +31,13 @@ var get = function (req, res) {
 };
 
 var post = function (req, res) {
+    var render = req.header('Content-Type') !== 'application/json';
     if(!config.user.register.allow) {
-        res.status(404);
-        res.end();
+        throw new AuthError('ForbiddenOperationException', 'Not allowed to register.', 403, undefined, render);
     } else {
         var username = req.body.username;
         var password = req.body.password;
         var email = req.body.email;
-        var render = req.header('Content-Type') !== 'application/json';
 
         Logger.info('User try register with username: ' + username);
 
@@ -56,9 +54,23 @@ var post = function (req, res) {
             .then(function (user) {
                 if(user)
                     throw new AuthError('ForbiddenOperationException', 'Invalid username. User already exists.', 403);
-                // TODO save user
-                res.json({ succeed: 1, body: req.body });
-                res.end();
+                new User({
+                    uuid: Util.randomUUID(true),
+                    username: username,
+                    password: User.securityPassword(password),
+                    timestamp: Util.timestamp(),
+                    email: email,
+                    banned: 0 }).saveUser()
+                    .then(function (user) {
+                        Logger.info('User register succeed with username: ' + user.username);
+                        if(render) {
+                            res.render('registered', { title: 'User Register - AuthWeb', username: user.username, uuid: user.uuid });
+                            res.end();
+                        } else {
+                            res.json({ username: user.username, uuid: user.uuid });
+                            res.end();
+                        }
+                    });
             })
             .catch(function (err) {
                 if(err instanceof AuthError)
