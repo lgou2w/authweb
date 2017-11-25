@@ -61,6 +61,8 @@ module.exports = {
         password: 'SHA256WithSalt',
         // User password available storage mode (Case sensitive)
         // It is recommended to use SHA512WithSalt with high strength
+        // 用户密码可用存储模式 (区分大小写)
+        // 建议使用 SHA512WithSalt 高强度存储模式
         // ) Raw: Clear text password
         // ) MD5: Password MD5 Hash
         // ) SHA256: Password Sha-256 Hash
