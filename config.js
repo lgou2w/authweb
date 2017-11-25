@@ -22,7 +22,7 @@ module.exports = {
 
     // Local (See: local.json)
     // 本地化 (见: local.json)
-    local: 'zh_CN',
+    local: 'en_US',
     locals: [
        'en_US', 'zh_CN'
     ],
