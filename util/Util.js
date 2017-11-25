@@ -99,12 +99,15 @@ Util.generateString = function (length, maxIndex) {
 };
 
 /**
- * Validate Reg of String
+ * Validate String of Regex
  *
  * @param {RegExp | string} reg
  * @param {string} str
+ * @param {boolean} [allowNone]
  */
-Util.validateReg = function (reg, str) {
+Util.validateReg = function (reg, str, allowNone) {
+    if(allowNone && reg === '')
+        return true;
     var regex = reg;
     if(typeof reg === 'string')
         regex = eval(reg.indexOf('/') === 0 ? reg : ('/' + reg + '/'));

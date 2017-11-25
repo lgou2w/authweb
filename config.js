@@ -46,8 +46,8 @@ module.exports = {
             // Whether to allow registration
             // 是否允许注册
             allow: true,
-            // Registration field values match
-            // 注册时字段值的匹配
+            // Registration field values match. The value of '' matches all
+            // 注册时字段值的匹配. 值为 '' 则匹配全部
             regex: {
                 // Username, It is recommended not to exceed 16 length because the database uses VARCHAR (16)
                 // 用户名, 建议不要超过16个长度, 因为数据库使用的是 VARCHAR(16)
@@ -96,7 +96,22 @@ module.exports = {
         profile: {
             // Whether to allow choice. If false, the body has the selectedProfile property when the request is refresh, access is forbidden (See: multi-role)
             // 是否允许选择. 如果为 false, 当刷新请求时 body 具有 selectedProfile 属性, 那么会被禁止访问 (见: 多角色)
-            allowSelecting: false
+            allowSelecting: false,
+            // Default profile settings
+            // 默认档案设置
+            default: {
+                // Whether to enable this
+                // 是否开启此功能
+                enable: true,
+                // Default skin and cape hash. You can see here comes with
+                // 默认皮肤和披风哈希. 你可以到这里查看自带的
+                // https://github.com/McMoonLakeDevAuth/authweb/blob/master/models/Texture.js#L102-L126
+                skin: '9c5ceddbebff901e568f02d70e699bebc7e4169d91dbf2fdc0a1e32df496008a',
+                cape: '5786fe99be377dfb6858859f926c4dbc995751e91cee373468c5fbf4865e7151',
+                // Whether to use the slim skin model
+                // 皮肤是否使用纤细模型
+                slim: false
+            },
         }
     }
 

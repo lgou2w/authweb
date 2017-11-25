@@ -43,11 +43,11 @@ var post = function (req, res) {
 
         if(!username || !password)
             throw new AuthError('ForbiddenOperationException', 'Invalid username or password', 403, undefined, render);
-        if(!Util.validateReg(config.user.register.regex.username, username))
+        if(!Util.validateReg(config.user.register.regex.username, username, true))
             throw new AuthError('ForbiddenOperationException', 'Invalid username. Not allowed format. (\'' + config.user.register.regex.username + '\')', 403, undefined, render);
-        if(!Util.validateReg(config.user.register.regex.password, password))
+        if(!Util.validateReg(config.user.register.regex.password, password, true))
             throw new AuthError('ForbiddenOperationException', 'Invalid password. Not allowed format. (\'' + config.user.register.regex.password + '\')', 403, undefined, render);
-        if(email && !Util.validateReg(config.user.register.regex.email, email))
+        if(email && !Util.validateReg(config.user.register.regex.email, email, true))
             throw new AuthError('ForbiddenOperationException', 'Invalid email. Not allowed format. (\'' + config.user.register.regex.email + '\')', 403, undefined, render);
 
         User.findUserByName(username)

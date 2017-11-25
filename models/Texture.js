@@ -41,7 +41,7 @@ function Texture(texture) {
  * @param {Model | {url: string, [metadata]: json}} [model]
  */
 function Model(model) {
-    this.url = model.url ? BASE_URL + model.url : undefined;
+    this.url = model.url;
     this.metadata = model.metadata;
 }
 
@@ -62,7 +62,7 @@ Texture.prototype.toBase64 = function () {
 };
 
 /**
- * Create Texture with Skin and Cape
+ * Create Texture with Skin and Cape from hash
  *
  * @param {string} profileId
  * @param {string} profileName
@@ -76,9 +76,9 @@ Texture.prototype.toBase64 = function () {
 Texture.createTexture = function (profileId, profileName, signatureRequired, skin, slim, cape, timestamp) {
     var textures = {};
     if(skin)
-        textures.SKIN = Model.create(skin, slim ? { model: 'slim' } : undefined);
+        textures.SKIN = Model.create(BASE_URL + skin, slim ? { model: 'slim' } : undefined);
     if(cape)
-        textures.CAPE = Model.create(cape);
+        textures.CAPE = Model.create(BASE_URL + cape);
     return new Texture({
         timestamp: timestamp || Util.timestamp(),
         profileId: profileId,

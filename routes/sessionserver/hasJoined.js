@@ -20,6 +20,9 @@ var Logger = require('../../util/Logger');
 var UserToken = require('../../models/UserToken');
 var UserSession = require('../../models/UserSession');
 var UserProfile = require('../../models/UserProfile');
+var UserProperty = require('../../models/UserProperty');
+var Texture = require('../../models/Texture');
+var config = require('../../config');
 
 /**
  * GET request when the server authenticates the client.
@@ -50,9 +53,16 @@ var hasJoined = function (req, res) {
         .then(function (token) {
             if(!token || session.userId !== token.userId)
                 throw new AuthError('ForbiddenOperationException', 'Invalid session. Invalid user id.', 204);
-            res.status(200);
-            res.json(UserProfile.OWNER);
-            res.end();
+            if(config.user.profile.default.enable) {
+                var texture = Texture.createTexture(token.userId, username, true, config.user.profile.default.skin, config.user.profile.default.slim, config.user.profile.default.cape);
+                var property = UserProperty.createProperty(texture);
+                var profile = UserProfile.createProfile(texture.profileId, texture.profileName, [property]);
+                res.json(profile);
+                res.end();
+            } else {
+                res.json(UserProfile.createProfile(token.userId, username, []));
+                res.end();
+            }
         })
         .catch(function (err) {
             if(err)
