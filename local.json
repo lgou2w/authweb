@@ -162,7 +162,7 @@
     "zh_CN": "{{invalid.username}} {{register.notAllow.format}} {{format}}"
   },
   "register.notAllow.password.{{format}}": {
-    "en_US": "{{invalid.password}} Not allowed format. {{format}}",
+    "en_US": "{{invalid.password}} {{register.notAllow.format}} {{format}}",
     "zh_CN": "{{invalid.password}} {{register.notAllow.format}} {{format}}"
   },
   "register.notAllow.email.{{format}}": {
