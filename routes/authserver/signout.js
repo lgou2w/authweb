@@ -17,6 +17,7 @@
 
 var AuthError = require('../../util/AuthError');
 var Logger = require('../../util/Logger');
+var I18n = require('../../util/I18n');
 var User = require('../../models/User');
 var UserToken = require('../../models/UserToken');
 
@@ -37,12 +38,12 @@ var signout = function (req, res) {
     Logger.info('User signout with username: ' + username);
 
     if(!username || !password)
-        throw new AuthError('ForbiddenOperationException', 'Invalid credentials. Invalid username or password.', 403);
+        throw new AuthError('ForbiddenOperationException', I18n._('invalid.credentials.username_password'), 403);
 
     User.findUserByName(username)
         .then(function (user) {
             if(!user || !user.verifyPassword(password)) {
-                throw new AuthError('ForbiddenOperationException', 'Invalid credentials. Invalid username or password.', 403);
+                throw new AuthError('ForbiddenOperationException', I18n._('invalid.credentials.username_password'), 403);
             } else {
                 UserToken.deleteTokensByUserId(user.uuid)
                     .then(function () {

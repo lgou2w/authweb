@@ -1,0 +1,176 @@
+{
+  "nonUnsigned": {
+    "en_US": "Non-unsigned UUID format.",
+    "zh_CN": "非无符号 UUID 格式."
+  },
+
+  "invalid.credentials": {
+    "en_US": "Invalid credentials.",
+    "zh_CN": "无效证书."
+  },
+  "invalid.agent": {
+    "en_US": "Invalid agent.",
+    "zh_CN": "无效代理人."
+  },
+  "invalid.username": {
+    "en_US": "Invalid username.",
+    "zh_CN": "无效用户名."
+  },
+  "invalid.password": {
+    "en_US": "Invalid password.",
+    "zh_CN": "无效密码."
+  },
+  "invalid.email": {
+    "en_US": "Invalid email.",
+    "zh_CN": "无效邮箱."
+  },
+  "invalid.username_password": {
+    "en_US": "Invalid username or password.",
+    "zh_CN": "无效用户名或密码."
+  },
+  "invalid.accessToken": {
+    "en_US": "Invalid access token.",
+    "zh_CN": "无效访问令牌."
+  },
+  "invalid.clientToken.accessTokenMax": {
+    "en_US": "Invalid clientToken. The maximum number of accessToken.",
+    "zh_CN": "无效客户端令牌. 访问令牌已到最大数量."
+  },
+  "invalid.token.orExpired": {
+    "en_US": "Invalid token or expired.",
+    "zh_CN": "无效令牌或已过期."
+  },
+  "invalid.token.orProfile": {
+    "en_US": "Invalid token or profile.",
+    "zh_CN": "无效令牌或档案."
+  },
+  "invalid.userId": {
+    "en_US": "Invalid user id.",
+    "zh_CN": "无效用户Id."
+  },
+  "invalid.serverId": {
+    "en_US": "Invalid server id.",
+    "zh_CN": "无效服务器Id."
+  },
+  "invalid.session": {
+    "en_US": "Invalid session.",
+    "zh_CN": "无效会话."
+  },
+  "invalid.session.orIp": {
+    "en_US": "Invalid session or ip.",
+    "zh_CN": "无效会话或IP."
+  },
+  "invalid.selectedProfile.orNonUnsigned": {
+    "en_US": "Invalid selected profile or {{nonUnsigned}}",
+    "zh_CN": "无效档案或 {{noneUnsigned}}"
+  },
+  "invalid.uuid.orNoneUnsigned": {
+    "en_US": "Invalid uuid or {{nonUnsigned}}",
+    "zh_CN": "无效 uuid 或 {{nonUnsigned}}"
+  },
+  "invalid.uuid.account.not.exists": {
+    "en_US": "Invalid uuid or {{account.not.exists}}",
+    "zh_CN": "无效 uuid 或 {{account.not.exists}}"
+  },
+
+  "account.banned": {
+    "en_US": "Account has been banned.",
+    "zh_CN": "账户已被封禁."
+  },
+  "account.exists": {
+    "en_US": "User already exists.",
+    "zh_CN": "用户已经存在."
+  },
+  "account.not.exists": {
+    "en_US": "User does not exist.",
+    "zh_CN": "用户未存在."
+  },
+
+  "profile.accessToken.assigned": {
+    "en_US": "Access token already has a profile assigned.",
+    "zh_CN": "访问令牌已经和档案绑定."
+  },
+
+  "register.title": {
+    "en_US": "User Register - AuthWeb",
+    "zh_CN": "用户注册 - AuthWeb"
+  },
+  "register.subTitle": {
+    "en_US": "User Register",
+    "zh_CN": "用户注册"
+  },
+  "register.body.username": {
+    "en_US": "Username:",
+    "zh_CN": "用户名:"
+  },
+  "register.body.password": {
+    "en_US": "Password:",
+    "zh_CN": "密码:"
+  },
+  "register.body.email": {
+    "en_US": "Email:",
+    "zh_CN": "邮箱:"
+  },
+  "register.body.submit": {
+    "en_US": "Confirm",
+    "zh_CN": "确认"
+  },
+  "register.notAllow": {
+    "en_US": "Not allowed to register.",
+    "zh_CN": "不允许注册."
+  },
+  "register.notAllow.format": {
+    "en_US": "Not allowed format.",
+    "zh_CN": "不允许格式."
+  },
+  "register.success.subTitle": {
+    "en_US": "Register Succeed",
+    "zh_CN": "注册成功"
+  },
+
+  "error.title": {
+    "en_US": "Error - AuthWeb",
+    "zh_CN": "错误 - AuthWeb"
+  },
+  "error.subTitle": {
+    "en_US": "Error",
+    "zh_CN": "错误"
+  },
+
+  "server.session.save.failed": {
+    "en_US": "Failed to save session.",
+    "zh_CN": "会话保存失败."
+  },
+
+
+
+  "__commit": "Should not be modified = 不应该被修改",
+  "invalid.credentials.username_password": {
+    "en_US": "{{invalid.credentials}} {{invalid.username_password}}",
+    "zh_CN": "{{invalid.credentials}} {{invalid.username_password}}"
+  },
+  "invalid.accessToken.nonUnsigned": {
+    "en_US": "{{invalid.accessToken}} {{nonUnsigned}}",
+    "zh_CN": "{{invalid.accessToken}} {{nonUnsigned}}"
+  },
+  "invalid.session.userId": {
+    "en_US": "{{invalid.session}} {{invalid.userId}}",
+    "zh_CN": "{{invalid.session}} {{invalid.userId}}"
+  },
+  "register.notAllow.username.{{format}}": {
+    "en_US": "{{invalid.username}} {{register.notAllow.format}} {{format}}",
+    "zh_CN": "{{invalid.username}} {{register.notAllow.format}} {{format}}"
+  },
+  "register.notAllow.password.{{format}}": {
+    "en_US": "{{invalid.password}} Not allowed format. {{format}}",
+    "zh_CN": "{{invalid.password}} {{register.notAllow.format}} {{format}}"
+  },
+  "register.notAllow.email.{{format}}": {
+    "en_US": "{{invalid.email}} {{register.notAllow.format}} {{format}}",
+    "zh_CN": "{{invalid.email}} {{register.notAllow.format}} {{format}}"
+  },
+  "register.notAllow.account.exists": {
+    "en_US": "{{invalid.username}} {{account.exists}}",
+    "zh_US": "{{invalid.username}} {{account.exists}}"
+  }
+}

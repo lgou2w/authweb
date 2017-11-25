@@ -18,6 +18,7 @@
 var AuthError = require('../../util/AuthError');
 var Logger = require('../../util/Logger');
 var Util = require('../../util/Util');
+var I18n = require('../../util/I18n');
 var UserToken = require('../../models/UserToken');
 var UserSession = require('../../models/UserSession');
 
@@ -40,20 +41,20 @@ var join = function (req, res) {
     Logger.info('User try join server \'' + serverId + '\' with accessToken: ' + accessToken);
 
     if(!Util.isUUID(accessToken, true))
-        throw new AuthError('ForbiddenOperationException', 'Invalid access token or Non-unsigned UUID format.', 403);
+        throw new AuthError('ForbiddenOperationException', I18n._('invalid.accessToken.orUnsigned'), 403);
     if(!Util.isUUID(selectedProfile, true))
-        throw new AuthError('ForbiddenOperationException', 'Invalid selected profile or Non-unsigned UUID format.', 403);
+        throw new AuthError('ForbiddenOperationException', I18n._('invalid.selectedProfile.orNonUnsigned'), 403);
     if(!serverId)
-        throw new AuthError('ForbiddenOperationException', 'Invalid server id.', 403);
+        throw new AuthError('ForbiddenOperationException', I18n._('invalid.serverId'), 403);
 
     UserToken.findTokenByAccess(accessToken)
         .then(function (token) {
             if(!token || token.userId !== selectedProfile) {
-                throw new AuthError('ForbiddenOperationException', 'Invalid token or profile.', 403);
+                throw new AuthError('ForbiddenOperationException', I18n._('invalid.token.orProfile'), 403);
             } else {
                 var session = UserSession.createSession(serverId, token.accessToken, token.userId, ip);
                 if(!session.saveSession()) {
-                    throw new AuthError('Internal Error', 'Failed to save session.', 500);
+                    throw new AuthError('Internal Error', I18n._('server.session.save.failed'), 500);
                 } else {
                     Logger.info('User join server \'' + serverId + '\' with session: ' + JSON.stringify(session));
                     res.status(204);

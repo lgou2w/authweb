@@ -17,6 +17,7 @@
 
 var AuthError = require('../../util/AuthError');
 var Logger = require('../../util/Logger');
+var I18n = require('../../util/I18n');
 var User = require('../../models/User');
 var UserToken = require('../../models/UserToken');
 var UserAuthentication = require('../../models/UserAuthentication');
@@ -46,17 +47,17 @@ var authenticate = function (req, res) {
     Logger.info('User authenticate with username: ' + username);
 
     if(!username || !password)
-        throw new AuthError('ForbiddenOperationException', 'Invalid credentials. Invalid username or password.', 403);
+        throw new AuthError('ForbiddenOperationException', I18n._('invalid.credentials.username_password'), 403);
     if(!agent || (agent.name !== 'Minecraft' || agent.version !== 1))
-        throw new AuthError('ForbiddenOperationException', 'Invalid agent.', 403);
+        throw new AuthError('ForbiddenOperationException', I18n._('invalid.agent'), 403);
 
     User.findUserByName(username)
         .then(function (user) {
             if(!user || !user.verifyPassword(password)) {
-                throw new AuthError('ForbiddenOperationException', 'Invalid credentials. Invalid username or password.', 403);
+                throw new AuthError('ForbiddenOperationException', I18n._('invalid.credentials.username_password'), 403);
             } else {
                 if(user.banned)
-                    throw new AuthError('ForbiddenOperationException', 'Account has been banned.', 403);
+                    throw new AuthError('ForbiddenOperationException', I18n._('account.banned'), 403);
                 UserToken.findTokenByClientOrCreate(user.uuid, clientToken)
                     .then(function (token) {
                         var authentication = UserAuthentication.create(user.uuid, user.username, token.accessToken, token.clientToken, requestUser);

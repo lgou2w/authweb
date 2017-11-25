@@ -18,6 +18,7 @@
 var AuthError = require('../../util/AuthError');
 var Logger = require('../../util/Logger');
 var Util = require('../../util/Util');
+var I18n = require('../../util/I18n');
 var User = require('../../models/User');
 var UserProfile = require('../../models/UserProfile');
 var UserProperty = require('../../models/UserProperty');
@@ -38,12 +39,12 @@ var profile =  function (req, res) {
     Logger.info('User get profile with uuid: ' + uuid);
 
     if(!uuid || !Util.isUUID(uuid, true))
-        throw new AuthError('ForbiddenOperationException', 'Invalid uuid or Non-unsigned UUID format.', 204);
+        throw new AuthError('ForbiddenOperationException', I18n._('invalid.uuid.orNoneUnsigned'), 204);
 
     User.findUserByUUID(uuid)
         .then(function (user) {
             if(!user)
-                throw new AuthError('ForbiddenOperationException', 'Invalid uuid. User does not exist.', 204);
+                throw new AuthError('ForbiddenOperationException', I18n._('invalid.uuid.account.not.exists'), 204);
             if(config.user.profile.default.enable) {
                 var texture = Texture.createTexture(user.uuid, user.username, unsigned, config.user.profile.default.skin, config.user.profile.default.slim, config.user.profile.default.cape);
                 var property = UserProperty.createProperty(texture);

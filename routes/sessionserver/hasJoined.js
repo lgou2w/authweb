@@ -17,6 +17,7 @@
 
 var AuthError = require('../../util/AuthError');
 var Logger = require('../../util/Logger');
+var I18n = require('../../util/I18n');
 var UserToken = require('../../models/UserToken');
 var UserSession = require('../../models/UserSession');
 var UserProfile = require('../../models/UserProfile');
@@ -41,18 +42,18 @@ var hasJoined = function (req, res) {
     Logger.info('Try get has join server \'' + serverId + '\' with accessToken: ' + username);
 
     if(!serverId)
-        throw new AuthError('ForbiddenOperationException', 'Invalid server id.', 204);
+        throw new AuthError('ForbiddenOperationException', I18n._('invalid.serverId'), 204);
     if(!username)
-        throw new AuthError('ForbiddenOperationException', 'Invalid username.', 204);
+        throw new AuthError('ForbiddenOperationException', I18n._('invalid.username'), 204);
 
     var session = UserSession.findSessionByServerId(serverId);
     if(!session || (ip && session.ip !== ip))
-        throw new AuthError('ForbiddenOperationException', 'Invalid session or ip.', 204);
+        throw new AuthError('ForbiddenOperationException', I18n._('invalid.session.orIp'), 204);
 
     UserToken.findTokenByAccess(session.accessToken)
         .then(function (token) {
             if(!token || session.userId !== token.userId)
-                throw new AuthError('ForbiddenOperationException', 'Invalid session. Invalid user id.', 204);
+                throw new AuthError('ForbiddenOperationException', I18n._('invalid.session.userId'), 204);
             if(config.user.profile.default.enable) {
                 var texture = Texture.createTexture(token.userId, username, true, config.user.profile.default.skin, config.user.profile.default.slim, config.user.profile.default.cape);
                 var property = UserProperty.createProperty(texture);

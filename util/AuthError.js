@@ -16,6 +16,7 @@
  */
 
 var Logger = require('./Logger');
+var I18n = require('./I18n');
 var util = require('util');
 
 function AuthError(error, message, status, cause, render) {
@@ -33,7 +34,7 @@ AuthError.response = function (res, error, message, status, cause) {
     if(error instanceof AuthError) {
         Logger.error('Error: ' + error.error + ': ' + error.message);
         if(error.render) {
-            res.render('error', { title: 'Error - AuthWeb', error: error.error, message: error.message });
+            res.render('error', { title: I18n._('error.title'), subTitle: I18n._('error.subTitle'), error: error.error, message: error.message });
             res.end();
         } else {
             res.status(error.status || 500);

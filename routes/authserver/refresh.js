@@ -18,6 +18,7 @@
 var AuthError = require('../../util/AuthError');
 var Logger = require('../../util/Logger');
 var Util = require('../../util/Util');
+var I18n = require('../../util/I18n');
 var User = require('../../models/User');
 var UserToken = require('../../models/UserToken');
 var UserAuthentication = require('../../models/UserAuthentication');
@@ -44,19 +45,19 @@ var refresh = function (req, res) {
     Logger.info('User refresh with accessToken: ' + accessToken);
 
     if(!Util.isUUID(accessToken, true))
-        throw new AuthError('ForbiddenOperationException', 'Invalid access token or Non-unsigned UUID format.', 403);
+        throw new AuthError('ForbiddenOperationException', I18n._('invalid.accessToken.orUnsigned'), 403);
     if(!config.user.profile.allowSelecting && selectedProfile)
-        throw new AuthError('ForbiddenOperationException', 'Access token already has a profile assigned.', 403);
+        throw new AuthError('ForbiddenOperationException', I18n._('profile.accessToken.assigned'), 403);
 
     UserToken.findTokenByAccess(accessToken)
         .then(function (token) {
             if(!token || !token.isValidElseDelete(true) || (clientToken && token.clientToken !== clientToken)) {
-                throw new AuthError('ForbiddenOperationException', 'Invalid token or expired.', 403)
+                throw new AuthError('ForbiddenOperationException', I18n._('invalid.token.orExpired'), 403)
             } else {
                 User.findUserByUUID(token.userId)
                     .then(function (user) {
                         if(user.banned)
-                            throw new AuthError('ForbiddenOperationException', 'Account has been banned.', 403);
+                            throw new AuthError('ForbiddenOperationException', I18n._('account.banned'), 403);
                         if(clientToken && token.clientToken === clientToken) {
                             return UserToken.updateTokenByClient(user.userId, token.clientToken)
                                 .then(function (token) {

@@ -18,6 +18,7 @@
 var AuthError = require('../../util/AuthError');
 var Logger = require('../../util/Logger');
 var Util = require('../../util/Util');
+var I18n = require('../../util/I18n');
 var UserToken = require('../../models/UserToken');
 
 /**
@@ -34,12 +35,12 @@ var invalidate = function (req, res) {
     Logger.info('User invalidate token with accessToken: ' + accessToken);
 
     if(!Util.isUUID(accessToken, true))
-        throw new AuthError('ForbiddenOperationException', 'Invalid access token or Non-unsigned UUID format.', 204);
+        throw new AuthError('ForbiddenOperationException', I18n._('invalid.accessToken.orUnsigned'), 204);
 
     UserToken.findTokenByAccess(accessToken)
         .then(function (token) {
             if(!token || !token.isValidElseDelete(false) || (clientToken && token.clientToken !== clientToken)) {
-                throw new AuthError('ForbiddenOperationException', 'Invalid token or expired.', 204);
+                throw new AuthError('ForbiddenOperationException', I18n._('invalid.token.orExpired'), 204);
             } else {
                 UserToken.deleteTokenByAccess(token.accessToken)
                     .then(function () {

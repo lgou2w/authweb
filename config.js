@@ -20,6 +20,13 @@
 
 module.exports = {
 
+    // Local (See: local.json)
+    // 本地化 (见: local.json)
+    local: 'zh_CN',
+    locals: [
+       'en_US', 'zh_CN'
+    ],
+
     // Http server settings
     // Http 服务器设置
     http: {

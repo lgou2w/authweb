@@ -19,6 +19,7 @@ var AuthError = require('../util/AuthError');
 var Logger = require('../util/Logger');
 var MySQL = require('../util/MySQL');
 var Util = require('../util/Util');
+var I18n = require('../util/I18n');
 var config = require('../config');
 
 /**
@@ -87,7 +88,7 @@ UserToken.findTokenByClientOrCreate = function (userId, clientToken) {
         return UserToken.findTokensByUserId(userId)
             .then(function (tokens) {
                 if(tokens && tokens.length >= config.user.token.max) {
-                    throw new AuthError('ForbiddenOperationException', 'Invalid clientToken. The maximum number of accessToken.', 403);
+                    throw new AuthError('ForbiddenOperationException', I18n._('invalid.clientToken.accessTokenMax'), 403);
                 } else {
                     return UserToken.createToken(userId).saveToken();
                 }
